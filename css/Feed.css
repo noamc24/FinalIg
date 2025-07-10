@@ -663,6 +663,7 @@
   transform: scale(1.1);
 }
 .share-btn{
+color: var(--comments-color);
 border: none;
 border-radius: 0;
 background-color: transparent;
@@ -711,4 +712,13 @@ background-color: transparent;
   .comments-content {
     width: 100%;
   }
+}
+.news-text {
+  direction: rtl;
+  text-align: right;
+  font-family: "Heebo", "Arial", sans-serif;
+  line-height: 1.6;
+  font-size: 16px;
+  max-width: 600px;
+  margin: auto;
 }
