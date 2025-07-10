@@ -1,0 +1,157 @@
+body {
+  background-color: #000;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.logo-img {
+  width: 180px;
+  margin-bottom: 20px;
+}
+
+.signup-box {
+  background-color: #111;
+  border: 1px solid #333;
+  padding: 40px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.desc {
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.fb-btn,
+.signup-btn,
+form input {
+  width: 100%;
+  padding: 10px 14px;
+  box-sizing: border-box;
+  font-size: 14px;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 8px;
+}
+
+.fb-btn {
+  background-color: #1877f2;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+form input {
+  background: #222;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+.signup-btn {
+  background-color: #0095f6;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: #aaa;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #444;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+.terms {
+  font-size: 12px;
+  color: #888;
+  margin-top: 15px;
+}
+
+.terms a {
+  color: #aaa;
+  text-decoration: none;
+}
+
+.login-prompt {
+  margin-top: 10px;
+  text-align: center;
+  background-color: #111;
+  border: 1px solid #333;
+  padding: 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.login-prompt a {
+  color: #0095f6;
+  text-decoration: none;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.login-prompt a:hover {
+  text-decoration: underline;
+}
+
+.get-app {
+  text-align: center;
+  margin: 20px 0;
+  color: #aaa;
+}
+
+.get-the-app img {
+  width: 130px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.footer {
+  text-align: center;
+  color: #777;
+  font-size: 12px;
+  padding: 30px 10px;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  color: #777;
+  text-decoration: none;
+}
+
+.footer-bottom {
+  margin-top: 10px;
+}
