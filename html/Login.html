@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Instagram</title>
+  <link rel="shortcut icon" href="../assets/icons/instagram-icon-tab.png" />
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/login.css" />
+</head>
+
+<body>
+
+  <div class="container">
+
+    <main class="main-layout">
+
+      <img class="preview-img" src="../assets/img/instagram-preview-img.png" alt="Instagram Preview" />
+
+      <section class="auth-section">
+
+        <img class="title" src="../assets/img/instagram-title.png" alt="Instagram Logo" />
+
+        <form class="auth-form" id="loginForm">
+          <div class="form-group">
+            <input id="username" name="username" type="text" class="input-field"
+              placeholder='מספר טלפון, שם משתמש או דו"אל' required />
+            <input id="password" name="password" type="password" class="input-field" placeholder="סיסמה" required />
+
+          </div>
+
+          <button type="submit" class="btn-submit">התחבר/י</button>
+
+          <div class="divider">
+            <div class="line"></div>
+            <div class="or">או</div>
+            <div class="line"></div>
+          </div>
+
+          <div class="facebook-login">
+            <img src="../assets/icons/facebook-logo.png" alt="Facebook logo" />
+            <a href="https://www.facebook.com/login" target="_blank" alt="facebook Logo">
+              <span>התחבר/י באמצעות פייסבוק</span>
+            </a>
+          </div>
+            <div id="errorMessage" class="error-message"></div>
+          <div class="forgot-password">שכחת את הסיסמה?</div>
+        </form>
+
+        <div class="signup-prompt">
+          אין לך חשבון? <span class="signup-link">הרשמה</span>
+        </div>
+        <div class="get-the-app">
+          <p>הורד/הורידי את האפליקציה</p>
+          <div class="footer-logos">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.instagram.android&referrer=ig_mid%3DEBBA0F6C-10A2-41F9-A2C4-B46400E69CA1%26utm_content%3Dlo%26utm_source%3Dinstagramweb%26utm_medium%3Dbadge">
+              <img class="title" src="../assets/img/google-play.png" target="_blank" alt="Instagram Logo">
+            </a>
+            <a href="https://www.microsoft.com/en-us/">
+              <img class="title" src="../assets/img/microsoft.png" target="_blank" alt="Instagram Logo" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <nav class="footer-nav">
+        <a href="#">Meta</a>
+        <a href="#">אודות</a>
+        <a href="#">בלוג</a>
+        <a href="#">עזרה</a>
+        <a href="#">API</a>
+        <a href="#">פרטיות</a>
+        <a href="#">תנאים</a>
+        <a href="#">מיקומים</a>
+        <a href="#">אינסטגרם Lite</a>
+        <a href="#">Threads</a>
+        <a href="#">יצירת קשר עם העלאות ומי שאינו משתמש</a>
+        <a href="#">משרות</a>
+        <a href="#">Meta Verified</a>
+        <a href="#">הסכמי פשרה</a>
+      </nav>
+
+      <div class="footer-copy">
+        <div class="language-dropdown">
+          <select>
+            <option>Afrikaans</option>
+            <option>العربية</option>
+            <option>Čeština</option>
+            <option>Dansk</option>
+            <option>Deutsch</option>
+            <option>Ελληνικά</option>
+            <option>English</option>
+            <option>English (UK)</option>
+            <option>Español (España)</option>
+            <option>Español</option>
+            <option>فارسی</option>
+            <option>Suomi</option>
+            <option>Français</option>
+            <option selected>עברית</option>
+            <option>Bahasa Indonesia</option>
+            <option>Italiano</option>
+            <option>日本語</option>
+            <option>한국어</option>
+            <option>Bahasa Melayu</option>
+            <option>Norsk</option>
+            <option>Nederlands</option>
+            <option>Polski</option>
+          </select>
+        </div>
+        <span> 2025 Instagram from Meta ©</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../js/login.js"></script>
+
+</body>
+
+</html>
