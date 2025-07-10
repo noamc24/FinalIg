@@ -79,3 +79,30 @@ document.addEventListener("DOMContentLoaded", function () {
         this.classList.toggle("bx-hide");
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("loginForm");
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+
+    const isPhone = /^[0-9]{10}$/.test(username);
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
+
+    if ((isPhone || isEmail) && password.length >= 8) {
+      window.location.href = "feed.html";
+    } else {
+      let msg = "";
+      if (!isPhone && !isEmail) {
+        msg += "הכנס מספר טלפון תקני או כתובת מייל תקינה.\n";
+      }
+      if (password.length < 8) {
+        msg += "הסיסמה חייבת להכיל לפחות 8 תווים.";
+      }
+      alert(msg);
+    }
+  });
+});
