@@ -198,3 +198,15 @@ display: flex;
   width: 30%;
 }
 }
+.signup-link {
+  background: none;
+  border: none;
+  color: #0095f6;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+.signup-link:hover {
+  text-decoration: none;
+}

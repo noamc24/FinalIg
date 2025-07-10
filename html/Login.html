@@ -5,8 +5,9 @@
   <meta charset="UTF-8">
   <title>Instagram</title>
   <link rel="shortcut icon" href="../assets/icons/instagram-icon-tab.png" />
-  <link rel="stylesheet" href="../css/index.css">
   <link rel="stylesheet" href="../css/login.css" />
+    <link rel="stylesheet" href="../css/index.css" />
+
 </head>
 
 <body>
@@ -15,11 +16,11 @@
 
     <main class="main-layout">
 
-      <img class="preview-img" src="../assets/img/instagram-preview-img.png" alt="Instagram Preview" />
+      <img class="preview-img" src="../assets/icons/instagram-preview-img.png" alt="Instagram Preview" />
 
       <section class="auth-section">
 
-        <img class="title" src="../assets/img/instagram-title.png" alt="Instagram Logo" />
+        <img class="title" src="../assets/icons/iglogo.png" alt="Instagram Logo" />
 
         <form class="auth-form" id="loginForm">
           <div class="form-group">
@@ -46,19 +47,20 @@
             <div id="errorMessage" class="error-message"></div>
           <div class="forgot-password">שכחת את הסיסמה?</div>
         </form>
-
         <div class="signup-prompt">
-          אין לך חשבון? <span class="signup-link">הרשמה</span>
+          אין לך חשבון? 
+          <button class="signup-link" onclick="window.location.href='signUp.html'">הרשמה</button>
         </div>
+
         <div class="get-the-app">
           <p>הורד/הורידי את האפליקציה</p>
           <div class="footer-logos">
             <a
               href="https://play.google.com/store/apps/details?id=com.instagram.android&referrer=ig_mid%3DEBBA0F6C-10A2-41F9-A2C4-B46400E69CA1%26utm_content%3Dlo%26utm_source%3Dinstagramweb%26utm_medium%3Dbadge">
-              <img class="title" src="../assets/img/google-play.png" target="_blank" alt="Instagram Logo">
+              <img class="title" src="../assets/icons/google-play.png" target="_blank" alt="Instagram Logo">
             </a>
             <a href="https://www.microsoft.com/en-us/">
-              <img class="title" src="../assets/img/microsoft.png" target="_blank" alt="Instagram Logo" />
+              <img class="title" src="../assets/icons/microsoft.png" target="_blank" alt="Instagram Logo" />
             </a>
           </div>
         </div>
