@@ -19,3 +19,6 @@ mongoose.connect('mongodb://localhost:27017/new-users')
 app.use('/api/auth', authRoutes);
 
 app.listen(3000, () => console.log('🚀 Server running on http://localhost:3000'));
+
+const postRoutes = require('./routes/posts');
+app.use('/api/posts', postRoutes);

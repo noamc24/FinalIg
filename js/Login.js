@@ -22,8 +22,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const result = await res.json();
 
       if (res.ok) {
+        localStorage.setItem("loggedInUser", username);
         alert("התחברת בהצלחה!");
         window.location.href = "feed.html";
+
       } else {
         alert(result.error || "שגיאת התחברות");
       }

@@ -1,8 +1,44 @@
-const currentUser = {
-  username: "LookAlikeGaming",
-  avatar: "/assets/Photos/ChatGPT Image prfl4.png" 
-};
+document.addEventListener("DOMContentLoaded", async () => {
+  const username = localStorage.getItem("loggedInUser");
+  if (!username) {
+    window.location.href = "login.html";
+    return;
+  }
 
+  const res = await fetch(`/api/posts/user/${username}`);
+  const posts = await res.json();
+
+  renderFeed(posts); // תבנה פונקציה שמציגה את הפוסטים האלה
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const username = localStorage.getItem("loggedInUser");
+  if (!username) return alert("לא מחובר");
+
+  try {
+    const res = await fetch(`/api/posts/user/${username}`);
+    const posts = await res.json();
+    renderFeed(posts);
+  } catch (err) {
+    console.error("שגיאה בטעינת הפיד:", err);
+  }
+});
+
+function renderFeed(posts) {
+  const container = document.getElementById("feedContainer");
+  container.innerHTML = "";
+  posts.forEach(post => {
+    container.innerHTML += `
+      <div class="post">
+        ${post.mediaType === "image"
+          ? `<img src="${post.mediaUrl}" class="post-image" />`
+          : `<video src="${post.mediaUrl}" class="post-video" controls></video>`}
+        <p class="post-caption">${post.caption}</p>
+        <p class="post-user">פורסם על ידי: ${post.username}</p>
+      </div>
+    `;
+  });
+}
 
 function toggleLike(button) {
   let liked = button.classList.contains("liked");
