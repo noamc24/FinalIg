@@ -22,3 +22,6 @@ app.listen(3000, () => console.log('🚀 Server running on http://localhost:3000
 
 const postRoutes = require('./routes/posts');
 app.use('/api/posts', postRoutes);
+
+const userRoutes = require('./routes/user');
+app.use("/api/users", userRoutes);

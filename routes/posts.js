@@ -1,30 +1,42 @@
-router.get("/user/:username", async (req, res) => {
-  try {
-    const posts = await Post.find({ username: req.params.username }).sort({ createdAt: -1 });
-    res.json(posts);
-  } catch (err) {
-    res.status(500).json({ error: "שגיאת שרת" });
-  }
-});
 const express = require("express");
 const router = express.Router();
-const Post = require("/models/Post");
+const Post = require("../models/Post");
+const User = require("../models/user");
 
-// קבלת כל הפוסטים של משתמש מסוים
-router.get("/user/:username", async (req, res) => {
+// פיד של משתמש לפי מי שהוא עוקב אחריו
+router.get("/feed/:username", async (req, res) => {
   try {
-    const posts = await Post.find({ username: req.params.username }).sort({ createdAt: -1 });
+    const user = await User.findOne({ username: req.params.username }).populate("following");
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const followedUserIds = user.following.map(f => f._id);
+    followedUserIds.push(user._id); // גם את עצמו
+
+    const posts = await Post.find({ userId: { $in: followedUserIds } }).sort({ createdAt: -1 });
     res.json(posts);
   } catch (err) {
-    res.status(500).json({ error: "שגיאת שרת" });
+    console.error("שגיאה בקבלת הפיד:", err);
+    res.status(500).json({ error: "שגיאה בקבלת הפיד" });
   }
 });
+
 
 // יצירת פוסט חדש
 router.post("/", async (req, res) => {
   try {
     const { username, caption, mediaUrl, mediaType } = req.body;
-    const newPost = new Post({ username, caption, mediaUrl, mediaType });
+
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+const newPost = new Post({
+      userId: user._id,
+      username,
+      caption,
+      mediaUrl,
+      mediaType
+});
+
     await newPost.save();
     res.status(201).json({ message: "פוסט נוצר בהצלחה" });
   } catch (err) {
@@ -33,3 +45,4 @@ router.post("/", async (req, res) => {
 });
 
 module.exports = router;
+

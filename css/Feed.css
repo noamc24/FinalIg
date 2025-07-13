@@ -240,6 +240,16 @@
       margin-left: auto;
       border: none;
     }
+      .switch-button{
+      background: none;
+      color: #0095f6;
+      font-size: 14px;
+      font-style: bold;;
+      padding: 5px 10px;
+      cursor: pointer;
+      margin-left: auto;
+      border: none;
+    }
     .Help-Links{
       margin-top: 40px;
       color: gray;
