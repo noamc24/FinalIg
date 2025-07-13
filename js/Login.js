@@ -66,9 +66,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (formValid) {
-            console.log("redirecting")
-            window.location.href = "feed.html";
+        fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            username: inputValue,
+            password: passwordValue
+            })
+        })
+            .then((res) => res.json())
+            .then((result) => {
+            if (result.message) {// התחברות הצליחה
+
+                window.location.href = "feed.html";
+            } else {// שגיאת התחברות
+                alert(result.error || "שגיאה בהתחברות");
+            }
+            })
+            .catch((err) => {
+            alert("שגיאת שרת. נסה שוב מאוחר יותר.");
+            console.error(err);
+            });
         }
+
     });
 
     togglePassword.addEventListener("click", function () {
@@ -93,7 +113,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
 
     if ((isPhone || isEmail) && password.length >= 8) {
-      window.location.href = "feed.html";
     } else {
       let msg = "";
       if (!isPhone && !isEmail) {

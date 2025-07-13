@@ -8,18 +8,19 @@
 <body>
   <div class="container">
     <div class="signup-box">
-<img class="logo-img" src="../assets/icons/iglogo.png" alt="Instagram Logo" />
+<img class="logo-img" src="/assets/icons/instagramtitle.png" alt="Instagram Logo" />
       <p class="desc">הירשם כדי לראות תמונות וסרטונים מחברים.</p>
 
       <button class="fb-btn">התחבר עם פייסבוק</button>
       <div class="divider"><span>או</span></div>
 
-      <form>
-        <input type="text" placeholder="מספר נייד או כתובת אימייל" required>
-        <input type="text" placeholder="שם מלא" required>
-        <input type="text" placeholder="שם משתמש" required>
-        <input type="password" placeholder="סיסמה" required>
-        <button type="submit" class="signup-btn">הרשמה</button>
+      <form id="registerForm">
+        <input type="text" id="email" name="email" placeholder="אימייל" required>
+        <input type="text" id="fullName" name="fullName" placeholder="שם מלא" required>
+        <input type="text" id="username" name="username" placeholder="שם משתמש" required>
+        <input type="password" id="password" name="password" placeholder="סיסמה" required>
+
+        <button type="submit"  class="signup-btn">הרשמה</button>
       </form>
 
       <p class="terms">
@@ -43,10 +44,10 @@
           <div class="footer-logos">
             <a
               href="https://play.google.com/store/apps/details?id=com.instagram.android&referrer=ig_mid%3DEBBA0F6C-10A2-41F9-A2C4-B46400E69CA1%26utm_content%3Dlo%26utm_source%3Dinstagramweb%26utm_medium%3Dbadge">
-              <img class="title" src="../assets/icons/google-play.png" target="_blank" alt="Instagram Logo">
+              <img class="title" src="/assets/icons/google-play.png" target="_blank" alt="Instagram Logo">
             </a>
             <a href="https://www.microsoft.com/en-us/">
-              <img class="title" src="../assets/icons/microsoft.png" target="_blank" alt="Instagram Logo" />
+              <img class="title" src="/assets/icons/microsoft.png" target="_blank" alt="Instagram Logo" />
             </a>
           </div>
         </div>
@@ -73,6 +74,7 @@
     <span>© 2025 Instagram מ־Meta</span>
   </div>
 </footer>
+  <script src="/js/signUp.js"></script>
 
 
 </body>
