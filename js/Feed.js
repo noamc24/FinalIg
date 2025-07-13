@@ -1,6 +1,6 @@
 const currentUser = {
   username: "LookAlikeGaming",
-  avatar: "/FinalIg/assets/Photos/ChatGPT Image prfl4.png" 
+  avatar: "/assets/Photos/ChatGPT Image prfl4.png" 
 };
 
 
@@ -152,7 +152,7 @@ function handlePostUpload() {
    const postHTML = `
   <div class="post-header d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-      <img src="/FinalIg/assets/Photos/ChatGPT Image prfl4.png" class="avatar" />
+      <img src="/assets/Photos/ChatGPT Image prfl4.png" class="avatar" />
       <span class="username d-flex">Look Alike <p class="ms-2 text-secondary">• now</p></span>  
     </div>
     <i class='bx bx-trash post-delete-btn ms-3' onclick="deletePost(this)" title="מחק פוסט"></i>
