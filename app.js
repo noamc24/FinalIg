@@ -12,7 +12,7 @@ app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-mongoose.connect('mongodb://localhost:27017/instagram-clone')
+mongoose.connect('mongodb://localhost:27017/new-users')
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch(err => console.error('❌ Mongo Error:', err));
 
