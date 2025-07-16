@@ -1,3 +1,5 @@
+let currentPost = null;
+
 const username = localStorage.getItem("username");
 const postData = {
   username,
@@ -361,7 +363,6 @@ function showHeart(container) {
   }, 600);
 }
 
-let currentPost = null;
 
 function toggleCommentsSidebar(button) {
   const sidebar = document.getElementById("comments-sidebar");
