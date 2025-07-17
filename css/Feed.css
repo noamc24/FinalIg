@@ -20,13 +20,13 @@
 }
 
 .dark-mode .stories-bar img{
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      padding: 4px;
-      object-fit: cover;
-      border: 2px; 
-      box-sizing: border-box;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  padding: 4px;
+  object-fit: cover;
+  border: 2px; 
+  box-sizing: border-box;
 }
 .dark-mode .story img {
   background: linear-gradient(45deg, #ff8e15, #ff8019, #f25b5b, #cc2366, #bc1888);
@@ -99,11 +99,11 @@
     }
     
     .stories-bar {
+      overflow-x: hidden;
       margin-left: 0px;
       display: flex;
       gap: 15px;
       flex-wrap: nowrap;
-      overflow-x: auto;
       width: max-content;
     }
     .story {
@@ -111,8 +111,8 @@
       text-align: center;
     }
     .story img {
-      width: 110px;
-      height: 110px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       padding: 4px;
       object-fit: cover;
@@ -130,8 +130,8 @@
       text-align: center;
     } 
     .close img {
-      width: 110px;
-      height: 110px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       padding: 4px;
       background: linear-gradient(45deg, #05b51f, #0db504, #3ed004, #04951c, #02a13c);
