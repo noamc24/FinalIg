@@ -16,7 +16,7 @@ const postSchema = new mongoose.Schema({
   },
   mediaUrl: {
     type: String,
-    required: true
+    required: false
   },
   mediaType: {
     type: String, // "image" או "video"
