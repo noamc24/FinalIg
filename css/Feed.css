@@ -173,13 +173,13 @@
       height: 1000px;
       margin-left: 300px;
     }
-    
-  .followersSuggestions {
-  position: absolute;
-  right: 175px;
-  top: 35px;
-  max-width: 300px;
-  }
+      
+    .followersSuggestions {
+    position: absolute;
+    right: 175px;
+    top: 35px;
+    max-width: 300px;
+    }
 
     @media (max-width: 1800px){
       .followersSuggestions{
