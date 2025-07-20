@@ -25,3 +25,6 @@ app.use('/api/posts', postRoutes);
 
 const userRoutes = require('./routes/user');
 app.use("/api/users", userRoutes);
+
+const statsRoutes = require("./routes/stats");
+app.use("/api/stats", statsRoutes);
