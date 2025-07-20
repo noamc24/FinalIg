@@ -1,7 +1,105 @@
-const currentUser = {
-  username: "LookAlikeGaming",
-  avatar: "/FinalIg/assets/Photos/ChatGPT Image prfl4.png" 
+let currentPost = null;
+
+const username = localStorage.getItem("username");
+const postData = {
+  username,
+  caption,
+  mediaUrl,
+  mediaType
 };
+
+document.addEventListener("DOMContentLoaded", async () => {
+  // בדיקת משתמש מחובר
+  const username = localStorage.getItem("loggedInUser");
+  if (!username) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // טעינת פוסטים
+  try {
+    const res = await fetch(`/api/posts/feed/${username}`);
+    const posts = await res.json();
+    renderFeed(posts);
+  } catch (err) {
+    console.error("שגיאה בטעינת הפיד:", err);
+  }
+
+  // מצב לילה/יום
+  const toggleButtons = document.querySelectorAll(".toggle-mode");
+  toggleButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+
+      const isDark = document.body.classList.contains("dark-mode");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+
+      const icon = btn.querySelector("i");
+      if (icon) {
+        icon.classList.toggle("bx-sun", isDark);
+        icon.classList.toggle("bx-moon", !isDark);
+      }
+
+      if (typeof updateLogoForTheme === "function") {
+        updateLogoForTheme(isDark);
+      }
+    });
+  });
+
+  // טעינת מצב תצוגה קודם
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark-mode");
+    const icon = document.querySelector(".toggle-mode i");
+    if (icon) {
+      icon.classList.remove("bx-moon");
+      icon.classList.add("bx-sun");
+    }
+  }
+
+  // כפתור חזרה למעלה
+  const scrollBtn = document.getElementById("scrollToTopBtn");
+  window.addEventListener("scroll", () => {
+    scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
+  });
+
+  scrollBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // כפתור Follow/Unfollow בדף פרופיל
+  const button = document.getElementById("follow-button");
+  if (button) {
+    const followee = button.dataset.username;
+    const follower = username;
+
+    button.addEventListener("click", async () => {
+      const action = button.textContent.trim().toLowerCase() === "follow" ? "follow" : "unfollow";
+
+      try {
+        const res = await fetch(`/api/users/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            followerUsername: follower,
+            followeeUsername: followee
+          })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          button.textContent = action === "follow" ? "unfollow" : "follow";
+        } else {
+          alert(result.error || "שגיאה בבקשה");
+        }
+      } catch (err) {
+        console.error("שגיאה בבקשת follow/unfollow:", err);
+        alert("שגיאה בשרת");
+      }
+    });
+  }
+});
 
 
 function toggleLike(button) {
@@ -83,30 +181,6 @@ function activateSearchFilter(input){
     });
   });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const toggleButtons = document.querySelectorAll(".toggle-mode");
-
-  toggleButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
-
-      const isDark = document.body.classList.contains("dark-mode");
-      localStorage.setItem("theme", isDark ? "dark" : "light");
-
-
-      const icon = btn.querySelector("i");
-      if (icon) {
-        icon.classList.toggle("bx-sun", isDark);
-        icon.classList.toggle("bx-moon", !isDark);
-      }
-
-
-      if (typeof updateLogoForTheme === "function") {
-        updateLogoForTheme(isDark);
-      }
-    });
-  });
-
 
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme === "dark") {
@@ -117,82 +191,100 @@ document.addEventListener("DOMContentLoaded", () => {
       icon.classList.remove("bx-moon");
       icon.classList.add("bx-sun");
     }
-  }
-});
+  };
 
-function handlePostUpload() {
+async function handlePostUpload() {
   const caption = document.getElementById('captionInput').value;
   const file = document.getElementById('mediaInput').files[0];
+  const username = localStorage.getItem("username"); // או "loggedInUser" אם זה מה שאתה משתמש
 
-  if (!caption || !file) {
-    alert("Please provide both caption and media.");
+  if (!caption || !file || !username) {
+    alert("נא למלא את כל השדות");
     return;
   }
 
   const reader = new FileReader();
 
-  reader.onload = function (e) {
-    const mediaSrc = e.target.result;
-    let mediaHTML = "";
+  reader.onload = async function (e) {
+    const mediaUrl = e.target.result;
+    const mediaType = file.type.startsWith("image/") ? "image" :
+                      file.type.startsWith("video/") ? "video" : null;
 
-    if (file.type.startsWith("image/")) {
-      mediaHTML = `<img src="${mediaSrc}" class="post-image" />`;
-    } else if (file.type.startsWith("video/")) {
-      mediaHTML = `
-        <video class="post-video" controls muted autoplay loop style="max-width: 100%; border-radius: 8px;">
-          <source src="${mediaSrc}" type="${file.type}">
-          Your browser does not support the video tag.
-        </video>
-      `;
-    } else {
-      alert("Unsupported file type.");
+    if (!mediaType) {
+      alert("סוג קובץ לא נתמך");
       return;
     }
 
-   const postHTML = `
-  <div class="post-header d-flex justify-content-between align-items-center">
-    <div class="d-flex align-items-center">
-      <img src="/FinalIg/assets/Photos/ChatGPT Image prfl4.png" class="avatar" />
-      <span class="username d-flex">Look Alike <p class="ms-2 text-secondary">• now</p></span>  
-    </div>
-    <i class='bx bx-trash post-delete-btn ms-3' onclick="deletePost(this)" title="מחק פוסט"></i>
-  </div>
+    // שליחת הפוסט לשרת
+    try {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, caption, mediaUrl, mediaType })
+      });
 
-  <div class="post-image-container" ondblclick="showHeart(this)">
-    ${mediaHTML}
-    <div class="heart-animation">❤️</div>
-  </div>
+      const result = await res.json();
 
-  <div class="post-actions">
-    <button class="like-btn" data-likes="0">
-      <i class='bx bx-heart'></i> <span class="like-count">0</span>
-    </button>
-    <button class="cmnt-btn" onclick="toggleCommentsSidebar(this)">
-      💬 תגובות <span class="comment-count">0</span>
-    </button>
-    <button class="share-btn" onclick="openShareModal(this)">
-      <i class='bx bx-send'></i>
-    </button>
-  </div>
+      if (!res.ok) {
+        alert("שגיאה ביצירת פוסט: " + result.error);
+        return;
+      }
 
-  <div class="post-caption">
-    <span class="username">Look Alike</span> ${caption}
-  </div>
+      // יצירת HTML להצגת הפוסט אחרי שנשמר בשרת
+      const postHTML = `
+        <div class="post-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <img src="/assets/Photos/ChatGPT Image prfl4.png" class="avatar" />
+            <span class="username d-flex">${username} <p class="ms-2 text-secondary">• now</p></span>  
+          </div>
+          <i class='bx bx-trash post-delete-btn ms-3' onclick="deletePost(this)" title="מחק פוסט"></i>
+        </div>
 
-  <div class="comments-list d-none"></div>
-`;
+        <div class="post-image-container" ondblclick="showHeart(this)">
+          ${mediaType === "image"
+            ? `<img src="${mediaUrl}" class="post-image" />`
+            : `<video class="post-video" controls muted autoplay loop>
+                 <source src="${mediaUrl}" type="${file.type}">
+                 הדפדפן שלך לא תומך בסרטון.
+               </video>`}
+          <div class="heart-animation">❤️</div>
+        </div>
 
+        <div class="post-actions">
+          <button class="like-btn" data-likes="0">
+            <i class='bx bx-heart'></i> <span class="like-count">0</span>
+          </button>
+          <button class="cmnt-btn" onclick="toggleCommentsSidebar(this)">
+            💬 תגובות <span class="comment-count">0</span>
+          </button>
+          <button class="share-btn" onclick="openShareModal(this)">
+            <i class='bx bx-send'></i>
+          </button>
+        </div>
 
-    addPostToFeed(postHTML);
-    document.getElementById('captionInput').value = "";
-    document.getElementById('mediaInput').value = "";
+        <div class="post-caption">
+          <span class="username">${username}</span> ${caption}
+        </div>
 
-    const modal = bootstrap.Modal.getInstance(document.getElementById('postModal'));
-    modal.hide();
+        <div class="comments-list d-none"></div>
+      `;
+
+      addPostToFeed(postHTML); // מוסיף לפיד
+      document.getElementById('captionInput').value = "";
+      document.getElementById('mediaInput').value = "";
+
+      const modal = bootstrap.Modal.getInstance(document.getElementById('postModal'));
+      if (modal) modal.hide();
+
+    } catch (err) {
+      console.error("שגיאה בשרת:", err);
+      alert("שגיאה בשליחת הפוסט");
+    }
   };
 
   reader.readAsDataURL(file);
 }
+
 function addPostToFeed(postHTML) {
   const feed = document.getElementById("feedContainer");
   const alertBox = document.getElementById("newPostAlert");
@@ -216,18 +308,6 @@ function addPostToFeed(postHTML) {
     setTimeout(() => alertBox.classList.add("d-none"), 400); 
   }, 3000);
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const scrollBtn = document.getElementById("scrollToTopBtn");
-
-  
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 300) {
-      scrollBtn.style.display = "block";
-    } else {
-      scrollBtn.style.display = "none";
-    }
-  });
-
 
   scrollBtn.addEventListener("click", () => {
     window.scrollTo({
@@ -235,7 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
       behavior: "smooth"
     });
   });
-});
+
 function applyPostFilter() {
   const selected = document.getElementById("postFilterSelect").value;
   const posts = document.querySelectorAll(".post");
@@ -283,7 +363,6 @@ function showHeart(container) {
   }, 600);
 }
 
-let currentPost = null;
 
 function toggleCommentsSidebar(button) {
   const sidebar = document.getElementById("comments-sidebar");
@@ -432,3 +511,129 @@ document.getElementById("feedContainer").addEventListener("click", (e) => {
     }
   }
 });
+
+document.getElementById("follow-button").addEventListener("click", async () => {
+  const targetUsername = document.getElementById("follow-button").dataset.username;
+  const currentUser = localStorage.getItem("username");
+
+  try {
+    const res = await fetch(`/api/users/${currentUser}/follow/${targetUsername}`, {
+      method: "POST"
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      alert(result.message);
+    } else {
+      alert(result.error);
+    }
+  } catch (err) {
+    console.error("שגיאה:", err);
+    alert("שגיאה בשרת");
+  }
+});
+
+function renderFeed(posts) {
+  const container = document.getElementById("feedContainer");
+  const currentUser = localStorage.getItem("loggedInUser");
+  container.innerHTML = "";
+
+  posts.forEach(async (post) => {
+    const isNotMe = post.username !== currentUser;
+
+    let followButtonHTML = "";
+    if (isNotMe) {
+      const isFollowing = await checkFollowingStatus(currentUser, post.username);
+      const label = isFollowing ? "Unfollow" : "Follow";
+      followButtonHTML = `<button class="follow-button" data-username="${post.username}">${label}</button>`;
+    }
+
+    const mediaHTML = post.mediaType === "image"
+      ? `<img src="${post.mediaUrl}" class="post-image" />`
+      : `<video src="${post.mediaUrl}" class="post-video" controls></video>`;
+
+    container.innerHTML += `
+      <div class="post">
+        ${mediaHTML}
+        <p class="post-caption">${post.caption}</p>
+        <p class="post-user">
+          פורסם על ידי: ${post.username}
+          ${followButtonHTML}
+        </p>
+      </div>
+    `;
+  });
+
+  setTimeout(activateFollowButtons, 300); // השהייה כדי שכל הפוסטים ייטענו
+}
+
+function activateFollowButtons() {
+  const currentUser = localStorage.getItem("loggedInUser");
+  const buttons = document.querySelectorAll(".follow-button");
+
+  buttons.forEach(button => {
+    const targetUser = button.dataset.username;
+
+    button.addEventListener("click", async () => {
+      const action = button.textContent.trim().toLowerCase() === "follow" ? "follow" : "unfollow";
+
+      try {
+        const res = await fetch(`/api/users/${action}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            followerUsername: currentUser,
+            followeeUsername: targetUser
+          })
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          button.textContent = action === "follow" ? "Unfollow" : "Follow";
+        } else {
+          alert(result.error || "שגיאה בבקשת מעקב");
+        }
+      } catch (err) {
+        console.error("שגיאה בבקשת Follow/Unfollow:", err);
+        alert("שגיאה בשרת");
+      }
+    });
+  });
+}
+
+
+document.querySelectorAll(".follow-button").forEach(button => {
+  button.addEventListener("click", async function () {
+    const usernameToFollow = this.getAttribute("data-username");
+
+    try {
+      const res = await fetch(`/api/follow/${usernameToFollow}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // החלפת טקסט כפתור לפי סטטוס חדש
+        this.textContent = data.isFollowing ? "unfollow" : "follow";
+      } else {
+        console.error("Follow request failed", data.message);
+      }
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  });
+});
+async function checkFollowingStatus(currentUser, targetUser) {
+  try {
+    const res = await fetch(`/api/users/isFollowing?follower=${currentUser}&followee=${targetUser}`);
+    const data = await res.json();
+    return res.ok && data.isFollowing;
+  } catch (err) {
+    console.error("שגיאה בבדיקת סטטוס מעקב:", err);
+    return false;
+  }
+}
