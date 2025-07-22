@@ -637,3 +637,12 @@ async function checkFollowingStatus(currentUser, targetUser) {
     return false;
   }
 }
+
+function goToMyProfile() {
+  const username = localStorage.getItem("loggedInUser");
+  if (username) {
+    window.location.href = `/profile/${username}`;
+  } else {
+    alert("משתמש לא מחובר");
+  }
+}
