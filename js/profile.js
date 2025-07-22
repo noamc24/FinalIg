@@ -63,3 +63,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("שגיאה בטעינת הפוסטים:", err);
   }
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const profilePic = localStorage.getItem("profilePic") || "/assets/Photos/defaultprfl.png";
+  const img = document.getElementById("profilePic");
+  if (img) img.src = profilePic;
+});
+

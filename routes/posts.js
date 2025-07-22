@@ -1,3 +1,4 @@
+module.exports = router;
 const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
@@ -31,10 +32,11 @@ router.post("/", async (req, res) => {
 
 const newPost = new Post({
       userId: user._id,
-      username,
+      username: user.username,
       caption,
       mediaUrl,
-      mediaType
+      mediaType,
+      createdAt: new Date()
 });
 
     await newPost.save();
@@ -42,7 +44,6 @@ const newPost = new Post({
   } catch (err) {
     res.status(500).json({ error: "שגיאה ביצירת פוסט" });
   }
+  
 });
-
-module.exports = router;
 

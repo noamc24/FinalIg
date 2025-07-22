@@ -48,10 +48,9 @@
             <p class="ms-3 fs-5 mb-0 fw-bold"> Create</p>
           </div>
           <div class="d-flex" style="cursor: pointer;" onclick="goToMyProfile()">
-           <img src="/assets/Photos/ChatGPT Image prfl4.png" class="rounded-circle ms-1" style="width: 30px; height: 30px; object-fit: cover;">
+           <img id="profilePic" class="rounded-circle ms-1" style="width: 30px; height: 30px; object-fit: cover;">
            <p class="ms-3 fs-5 mb-0 fw-bold">Profile</p>
           </div>
-
           <div class="toggle-mode d-flex" id="darkModeToggle" style="cursor: pointer;">
             <i class='bx  bx-moon fs-2' id="themeIcon"></i> 
             <p class="ms-3 fs-5 mb-0 fw-bold"> Change Theme</p>
@@ -182,12 +181,6 @@
           <img src="/assets/Photos/ChatGPT Image prfl1.png">
           <p>noam11010</p>
         </div>
-        
-        <div class="close">
-          <img src="/assets/Photos/ChatGPT Image prfl5.png" >
-          <p>Sultan29</p>
-        </div>
-    
         <div class="story">
             <img src="/assets/Photos/IDF Logo.png" >
             <p>I.D.F</p>
@@ -255,7 +248,7 @@
         <i class='bx bx-trash post-delete-btn' onclick="deletePost(this)" title="מחק פוסט"></i>
       </div>
       <div class="post-image-container" ondblclick="showHeart(this)">
-        <img src="/assets/Photos/ChatGPT Image 5th lookalike.png" class="post-image" />
+        <img src="/assets/Photos/ChatGPT Image post5.png" class="post-image" />
         <div class="heart-animation">❤️</div>
         </div>
         <div class="post-actions">

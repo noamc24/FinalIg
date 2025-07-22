@@ -1,4 +1,6 @@
 let currentPost = null;
+localStorage.setItem("profilePic", user.profilePic || "/assets/Photos/defaultprfl.png");
+localStorage.setItem("username", user.username);
 
 const username = localStorage.getItem("username");
 const postData = {
@@ -646,3 +648,8 @@ function goToMyProfile() {
     alert("משתמש לא מחובר");
   }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    const pic = localStorage.getItem("profilePicture") || "/assets/Photos/default.png";
+    const img = document.getElementById("profilePic");
+    if (img) img.src = pic;
+  });
