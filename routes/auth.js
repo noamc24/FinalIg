@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
+const Post = require('../models/post');
 
 router.post('/register', async (req, res) => {
   try {
@@ -25,27 +26,32 @@ router.post('/register', async (req, res) => {
   }
 });
 
-
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
+  console.log("הגיע מהקליינט:", req.body);
 
   try {
     const user = await User.findOne({ username });
-    if (!user) return res.status(401).json({ error: 'שם המשתמש לא קיים' });
 
-    if (user.password !== password)
+    if (!user) {
+      console.log("משתמש לא נמצא");
+      return res.status(401).json({ error: 'שם המשתמש לא קיים' });
+    }
+
+    if (user.password !== password) {
+      console.log("סיסמה שגויה");
       return res.status(401).json({ error: 'סיסמה שגויה' });
+    }
 
-    res.status(200).json({ message: 'Logged in successfully!' });
+    res.status(200).json({
+      username: user.username,
+      profilePic: user.profilePic || "/assets/Photos/defaultprfl.png"
+    });
 
   } catch (err) {
+    console.error("🚨 שגיאת שרת בלוגין:", err);
     res.status(500).json({ error: 'שגיאת שרת' });
   }
-});
-
-res.status(200).json({
-  username: user.username,
-  profilePic: user.profilePic || "/assets/Photos/defaultprfl.png"
 });
 
 module.exports = router;

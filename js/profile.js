@@ -1,71 +1,81 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const usernameFromURL = window.location.pathname.split("/").pop();
   const loggedInUser = localStorage.getItem("loggedInUser");
+  if (!loggedInUser) {
+  console.warn("אין משתמש מחובר");
+  window.location.href = "login.html";
+  return;
+  }
 
   try {
     const res = await fetch(`/api/users/${usernameFromURL}`);
     const { user, posts } = await res.json();
 
-    document.getElementById("username").textContent = "@" + user.username;
-    document.getElementById("bio").textContent = user.bio || "No bio available";
-    document.getElementById("profilePic").src = user.profilePicUrl || "/assets/Photos/defaultPrfl.png";
-    document.getElementById("postsCount").textContent = `${posts.length} posts`;
-    document.getElementById("followersCount").textContent = `${user.followers.length} followers`;
-    document.getElementById("followingCount").textContent = `${user.following.length} following`;
+    // פרטי המשתמש
+    const usernameElem = document.getElementById("username");
+    if (usernameElem) usernameElem.textContent = "@" + user.username;
 
+    const bioElem = document.getElementById("bio");
+    if (bioElem) bioElem.textContent = user.bio || "No bio available";
+
+   const profilePicElem = document.getElementById("profilePic");
+   if (profilePicElem) {
+   console.log("🧠 user.profilePic מהשרת:", user.profilePic);
+  
+   const finalPic = user.profilePic || "/assets/Photos/defaultPrfl.png";
+   profilePicElem.src = finalPic;
+
+   console.log("📷 src שהוגדר בפועל:", profilePicElem.src);
+}
+
+    const postsCountElem = document.getElementById("posts-count");
+    if (postsCountElem) postsCountElem.textContent = `${posts.length} posts`;
+
+    const followersCountElem = document.getElementById("followersCount");
+    if (followersCountElem) followersCountElem.textContent = `${user.followers.length} followers`;
+
+    const followingCountElem = document.getElementById("followingCount");
+    if (followingCountElem) followingCountElem.textContent = `${user.following.length} following`;
+
+    // כפתור Edit/Follow
     const actionBtn = document.getElementById("actionBtn");
-    if (loggedInUser === user.username) {
-      actionBtn.textContent = "Edit Profile";
-    } else {
-      actionBtn.textContent = user.followers.includes(loggedInUser) ? "Unfollow" : "Follow";
-      actionBtn.onclick = () => {
-        //קוד follow/unfollow 
-        alert("Coming soon");
-      };
+    if (actionBtn) {
+      if (loggedInUser === user.username) {
+        actionBtn.textContent = "Edit Profile";
+      } else {
+        actionBtn.textContent = user.followers.includes(loggedInUser) ? "Unfollow" : "Follow";
+        actionBtn.onclick = () => {
+          alert("Coming soon"); // אפשר להחליף בקוד follow/unfollow בעתיד
+        };
+      }
     }
 
+    // תבנית פוסטים 
     const postsGrid = document.getElementById("postsGrid");
-    posts.forEach(post => {
-      const col = document.createElement("div");
-      col.className = "col-4 mb-3";
-      col.innerHTML = `<img src="${post.mediaUrl}" class="post-img rounded" />`;
-      postsGrid.appendChild(col);
-    });
+    if (postsGrid) {
+      posts.forEach(post => {
+        const col = document.createElement("div");
+        col.className = "col-4 mb-3";
+        col.innerHTML = `<img src="${post.mediaUrl}" class="post-img rounded" />`;
+        postsGrid.appendChild(col);
+      });
+    }
 
-  } catch (err) {
-    console.error("Error loading profile:", err);
-  }
-});
-
-document.addEventListener("DOMContentLoaded", async () => {
-  const username = window.location.pathname.split("/").pop();
-
-  try {
-    const res = await fetch(`/api/users/${username}`);
-    const { user, posts } = await res.json();
-
-    document.getElementById("username").textContent = "@" + user.username;
-    document.getElementById("posts-count").textContent = `${posts.length} posts`;
-
+    //  תבנית פוסטים למדיה שונה (תמונות / סרטונים)
     const postsContainer = document.getElementById("user-posts");
-    posts.forEach(post => {
-      const div = document.createElement("div");
-      div.innerHTML = `
-        ${post.mediaType === "image"
-          ? `<img src="${post.mediaUrl}" style="width: 100%; height: 300px; object-fit: cover;">`
-          : `<video src="${post.mediaUrl}" controls style="width: 100%; height: 300px; object-fit: cover;"></video>`
-        }
-      `;
-      postsContainer.appendChild(div);
-    });
+    if (postsContainer) {
+      posts.forEach(post => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          ${post.mediaType === "image"
+            ? `<img src="${post.mediaUrl}" style="width: 100%; height: 300px; object-fit: cover;">`
+            : `<video src="${post.mediaUrl}" controls style="width: 100%; height: 300px; object-fit: cover;"></video>`}
+        `;
+        postsContainer.appendChild(div);
+      });
+    }
 
   } catch (err) {
-    console.error("שגיאה בטעינת הפוסטים:", err);
+    console.error("❌ שגיאה בטעינת הפרופיל:", err);
   }
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const profilePic = localStorage.getItem("profilePic") || "/assets/Photos/defaultprfl.png";
-  const img = document.getElementById("profilePic");
-  if (img) img.src = profilePic;
-});
-
+  });

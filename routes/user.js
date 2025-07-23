@@ -53,8 +53,6 @@ router.post("/unfollow", async (req, res) => {
   }
 });
 
-module.exports = router;
-
 router.get("/:username", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.params.username }).lean();
@@ -65,8 +63,8 @@ router.get("/:username", async (req, res) => {
     res.json({
       user: {
         username: user.username,
-        bio: user.bio || "",
-        profilePicUrl: user.profilePicUrl || null,
+        bio: user.bio || "No bio available",
+        profilePic: user.profilePic || "/assets/Photos/defaultPrfl.png",
         followers: user.followers || [],
         following: user.following || []
       },
@@ -77,3 +75,21 @@ router.get("/:username", async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 });
+
+router.get('/profile/:username', async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    console.log("🔐 התחברות הצליחה:", user);
+    res.status(200).json({
+      username: user.username,
+      profilePic: user.profilePic || "/assets/Photos/defaultprfl.png"
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'שגיאת שרת' });
+  }
+});
+
+module.exports = router;
+
