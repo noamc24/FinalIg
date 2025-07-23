@@ -24,7 +24,7 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use("/uploads", express.static('uploads'));
 
 // Mongo connection
-mongoose.connect('mongodb://localhost:27017/new-users')
+mongoose.connect('mongodb+srv://noamc24:<db_password>@finalig.eub72vn.mongodb.net/')
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch(err => console.error('❌ Mongo Error:', err));
 
