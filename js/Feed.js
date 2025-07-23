@@ -1,4 +1,6 @@
 let currentPost = null;
+localStorage.setItem("profilePic", user.profilePic || "/assets/Photos/defaultprfl.png");
+localStorage.setItem("username", user.username);
 
 const username = localStorage.getItem("username");
 const postData = {
@@ -637,3 +639,17 @@ async function checkFollowingStatus(currentUser, targetUser) {
     return false;
   }
 }
+
+function goToMyProfile() {
+  const username = localStorage.getItem("loggedInUser");
+  if (username) {
+    window.location.href = `/profile/${username}`;
+  } else {
+    alert("משתמש לא מחובר");
+  }
+}
+document.addEventListener("DOMContentLoaded", () => {
+    const pic = localStorage.getItem("profilePicture") || "/assets/Photos/default.png";
+    const img = document.getElementById("profilePic");
+    if (img) img.src = pic;
+  });

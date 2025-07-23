@@ -11,12 +11,20 @@ router.post('/register', async (req, res) => {
 
     const newUser = new User({ username, fullName, email, password });
     await newUser.save();
-    res.status(201).json({ message: 'User created successfully!' });
 
+    const defaultFollows = ["KingPaul1010", "Ron.Drin7", "unrealNews", "Elad_Atia10", "Sultan29", "noam11010", "Sahar_ifrach", "Roy_montekyo10", "I.D.F", "itzik123213"];
+    await User.updateOne(
+      { _id: newUser._id },
+      { $addToSet: { following: { $each: defaultFollows } } }
+    );
+
+    res.status(201).json({ message: 'User created successfully!' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -33,6 +41,11 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'שגיאת שרת' });
   }
+});
+
+res.status(200).json({
+  username: user.username,
+  profilePic: user.profilePic || "/assets/Photos/defaultprfl.png"
 });
 
 module.exports = router;

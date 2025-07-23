@@ -173,13 +173,14 @@
       height: 1000px;
       margin-left: 300px;
     }
-    
+      
     .followersSuggestions {
-      position: absolute;
-      top: 30px;
-      right: 270px;
-      max-width: 300px;
+    position: absolute;
+    right: 175px;
+    top: 35px;
+    max-width: 300px;
     }
+
     @media (max-width: 1800px){
       .followersSuggestions{
         right: 50px;
@@ -374,7 +375,8 @@
   color: #ff5ca4;
   background: linear-gradient(45deg, #ff5ca4, #a853f3);
   color: transparent;
- -webkit-background-clip: text;
+  -webkit-background-clip: text;
+  background-clip: text;
   transform: translate(-50%, -50%) scale(0);
   opacity: 0;
   transition: transform 0.4s ease, opacity 0.4s ease;
