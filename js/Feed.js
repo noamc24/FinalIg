@@ -1,14 +1,18 @@
 let currentPost = null;
-localStorage.setItem("profilePic", user.profilePic || "/assets/Photos/defaultprfl.png");
-localStorage.setItem("username", user.username);
 
-const username = localStorage.getItem("username");
-const postData = {
-  username,
-  caption,
-  mediaUrl,
-  mediaType
-};
+const profilePic = localStorage.getItem("profilePic") || "/assets/Photos/defaultprfl.png";
+const username = localStorage.getItem("loggedInUser");
+document.addEventListener("DOMContentLoaded", () => {
+  const username = localStorage.getItem("loggedInUser");
+  if (!username) {
+    window.location.href = "login.html";
+    return;
+  }
+  localStorage.setItem("username", username);
+});
+
+localStorage.setItem("profilePic", profilePic);
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   // בדיקת משתמש מחובר
@@ -198,93 +202,86 @@ function activateSearchFilter(input){
 async function handlePostUpload() {
   const caption = document.getElementById('captionInput').value;
   const file = document.getElementById('mediaInput').files[0];
-  const username = localStorage.getItem("username"); // או "loggedInUser" אם זה מה שאתה משתמש
+  const username = localStorage.getItem("loggedInUser");
+  const profilePic = localStorage.getItem("profilePic") || "/assets/Photos/defaultprfl.png";
 
-  if (!caption || !file || !username) {
-    alert("נא למלא את כל השדות");
-    return;
+  if (!username) return alert("משתמש לא מחובר!");
+  if (!caption || !file) return alert("נא למלא את כל השדות");
+
+  const mediaType = file.type.startsWith("image/")
+    ? "image"
+    : file.type.startsWith("video/")
+    ? "video"
+    : null;
+
+  if (!mediaType) return alert("סוג קובץ לא נתמך");
+
+  const formData = new FormData();
+  formData.append("username", username);
+  formData.append("caption", caption);
+  formData.append("mediaType", mediaType);
+  formData.append("profilePic", profilePic);
+  formData.append("file", file); // זה הקובץ האמיתי
+
+  try {
+    const res = await fetch("/api/posts", {
+      method: "POST",
+      body: formData
+    });
+
+    if (!res.ok) throw new Error("שגיאה ביצירת פוסט בשרת");
+
+    // קבל את ה־URL של המדיה בחזרה
+    const result = await res.json();
+
+    // יצירת HTML להצגת הפוסט
+    const postHTML = `
+      <div class="post-header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <img src="${profilePic}" class="avatar" />
+          <span class="username d-flex">${username} <p class="ms-2 text-secondary">• עכשיו</p></span>  
+        </div>
+        <i class='bx bx-trash post-delete-btn ms-3' onclick="deletePost(this)" title="מחק פוסט"></i>
+      </div>
+
+      <div class="post-image-container" ondblclick="showHeart(this)">
+        ${mediaType === "image"
+          ? `<img src="${result.mediaUrl}" class="post-image" />`
+          : `<video class="post-video" controls muted autoplay loop>
+               <source src="${result.mediaUrl}" type="${file.type}">
+               הדפדפן שלך לא תומך בסרטון.
+             </video>`}
+        <div class="heart-animation">❤️</div>
+      </div>
+
+      <div class="post-actions">
+        <button class="like-btn" data-likes="0">
+          <i class='bx bx-heart'></i> <span class="like-count">0</span>
+        </button>
+        <button class="cmnt-btn" onclick="toggleCommentsSidebar(this)">
+          💬 תגובות <span class="comment-count">0</span>
+        </button>
+        <button class="share-btn" onclick="openShareModal(this)">
+          <i class='bx bx-send'></i>
+        </button>
+      </div>
+
+      <div class="post-caption">
+        <span class="username">${username}</span> ${caption}
+      </div>
+
+      <div class="comments-list d-none"></div>
+    `;
+
+    addPostToFeed(postHTML);
+    document.getElementById('captionInput').value = "";
+    document.getElementById('mediaInput').value = "";
+    const modal = bootstrap.Modal.getInstance(document.getElementById('postModal'));
+    if (modal) modal.hide();
+  } catch (err) {
+    console.error("שגיאה:", err);
+    alert("שגיאה בשליחת הפוסט");
   }
-
-  const reader = new FileReader();
-
-  reader.onload = async function (e) {
-    const mediaUrl = e.target.result;
-    const mediaType = file.type.startsWith("image/") ? "image" :
-                      file.type.startsWith("video/") ? "video" : null;
-
-    if (!mediaType) {
-      alert("סוג קובץ לא נתמך");
-      return;
-    }
-
-    // שליחת הפוסט לשרת
-    try {
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, caption, mediaUrl, mediaType })
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        alert("שגיאה ביצירת פוסט: " + result.error);
-        return;
-      }
-
-      // יצירת HTML להצגת הפוסט אחרי שנשמר בשרת
-      const postHTML = `
-        <div class="post-header d-flex justify-content-between align-items-center">
-          <div class="d-flex align-items-center">
-            <img src="/assets/Photos/ChatGPT Image prfl4.png" class="avatar" />
-            <span class="username d-flex">${username} <p class="ms-2 text-secondary">• now</p></span>  
-          </div>
-          <i class='bx bx-trash post-delete-btn ms-3' onclick="deletePost(this)" title="מחק פוסט"></i>
-        </div>
-
-        <div class="post-image-container" ondblclick="showHeart(this)">
-          ${mediaType === "image"
-            ? `<img src="${mediaUrl}" class="post-image" />`
-            : `<video class="post-video" controls muted autoplay loop>
-                 <source src="${mediaUrl}" type="${file.type}">
-                 הדפדפן שלך לא תומך בסרטון.
-               </video>`}
-          <div class="heart-animation">❤️</div>
-        </div>
-
-        <div class="post-actions">
-          <button class="like-btn" data-likes="0">
-            <i class='bx bx-heart'></i> <span class="like-count">0</span>
-          </button>
-          <button class="cmnt-btn" onclick="toggleCommentsSidebar(this)">
-            💬 תגובות <span class="comment-count">0</span>
-          </button>
-          <button class="share-btn" onclick="openShareModal(this)">
-            <i class='bx bx-send'></i>
-          </button>
-        </div>
-
-        <div class="post-caption">
-          <span class="username">${username}</span> ${caption}
-        </div>
-
-        <div class="comments-list d-none"></div>
-      `;
-
-      addPostToFeed(postHTML); // מוסיף לפיד
-      document.getElementById('captionInput').value = "";
-      document.getElementById('mediaInput').value = "";
-
-      const modal = bootstrap.Modal.getInstance(document.getElementById('postModal'));
-      if (modal) modal.hide();
-
-    } catch (err) {
-      console.error("שגיאה בשרת:", err);
-      alert("שגיאה בשליחת הפוסט");
-    }
-  };
-
-  reader.readAsDataURL(file);
 }
 
 function addPostToFeed(postHTML) {
@@ -310,13 +307,6 @@ function addPostToFeed(postHTML) {
     setTimeout(() => alertBox.classList.add("d-none"), 400); 
   }, 3000);
 }
-
-  scrollBtn.addEventListener("click", () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  });
 
 function applyPostFilter() {
   const selected = document.getElementById("postFilterSelect").value;
@@ -514,34 +504,47 @@ document.getElementById("feedContainer").addEventListener("click", (e) => {
   }
 });
 
-document.getElementById("follow-button").addEventListener("click", async () => {
-  const targetUsername = document.getElementById("follow-button").dataset.username;
-  const currentUser = localStorage.getItem("username");
-
-  try {
-    const res = await fetch(`/api/users/${currentUser}/follow/${targetUsername}`, {
-      method: "POST"
+document.addEventListener("DOMContentLoaded", function () {
+  const followBtn = document.getElementById("follow-button");
+  if (followBtn) {
+    followBtn.addEventListener("click", async () => {
+      document.getElementById("follow-button").addEventListener("click", async () => {
+        const targetUsername = document.getElementById("follow-button").dataset.username;
+        const currentUser = localStorage.getItem("username");
+      
+        try {
+          const res = await fetch(`/api/users/${currentUser}/follow/${targetUsername}`, {
+            method: "POST"
+          });
+      
+          const result = await res.json();
+          if (res.ok) {
+            alert(result.message);
+          } else {
+            alert(result.error);
+          }
+        } catch (err) {
+          console.error("שגיאה:", err);
+          alert("שגיאה בשרת");
+        }
+        });
     });
-
-    const result = await res.json();
-    if (res.ok) {
-      alert(result.message);
-    } else {
-      alert(result.error);
-    }
-  } catch (err) {
-    console.error("שגיאה:", err);
-    alert("שגיאה בשרת");
   }
 });
+  
+  function renderFeed(posts) {
+  if (!Array.isArray(posts)) {
+    console.error("Posts is not an array:", posts);
+    return;
+  }
 
-function renderFeed(posts) {
   const container = document.getElementById("feedContainer");
   const currentUser = localStorage.getItem("loggedInUser");
   container.innerHTML = "";
 
   posts.forEach(async (post) => {
     const isNotMe = post.username !== currentUser;
+    const profilePic = post.profilePic || "/assets/Photos/defaultprfl.png";
 
     let followButtonHTML = "";
     if (isNotMe) {
@@ -552,22 +555,50 @@ function renderFeed(posts) {
 
     const mediaHTML = post.mediaType === "image"
       ? `<img src="${post.mediaUrl}" class="post-image" />`
-      : `<video src="${post.mediaUrl}" class="post-video" controls></video>`;
+      : `<video class="post-video" controls muted autoplay loop>
+           <source src="${post.mediaUrl}" type="${post.mediaType}">
+           הדפדפן שלך לא תומך בסרטון.
+         </video>`;
 
-    container.innerHTML += `
+    const postHTML = `
       <div class="post">
-        ${mediaHTML}
-        <p class="post-caption">${post.caption}</p>
-        <p class="post-user">
-          פורסם על ידי: ${post.username}
-          ${followButtonHTML}
-        </p>
+        <div class="post-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <img src="${profilePic}" class="avatar" />
+            <span class="username d-flex">${post.username} <p class="ms-2 text-secondary">• לפני רגע</p></span>  
+          </div>
+          ${isNotMe ? followButtonHTML : `<i class='bx bx-trash post-delete-btn ms-3' onclick="deletePost(this)" title="מחק פוסט"></i>`}
+        </div>
+
+        <div class="post-image-container" ondblclick="showHeart(this)">
+          ${mediaHTML}
+          <div class="heart-animation">❤️</div>
+        </div>
+
+        <div class="post-actions">
+          <button class="like-btn" data-likes="0">
+            <i class='bx bx-heart'></i> <span class="like-count">0</span>
+          </button>
+          <button class="cmnt-btn" onclick="toggleCommentsSidebar(this)">
+            💬 תגובות <span class="comment-count">0</span>
+          </button>
+          <button class="share-btn" onclick="openShareModal(this)">
+            <i class='bx bx-send'></i>
+          </button>
+        </div>
+
+        <div class="post-caption">
+          <span class="username">${post.username}</span> ${post.caption}
+        </div>
+
+        <div class="comments-list d-none"></div>
       </div>
     `;
-  });
 
-  setTimeout(activateFollowButtons, 300); // השהייה כדי שכל הפוסטים ייטענו
+    container.innerHTML += postHTML;
+  });
 }
+
 
 function activateFollowButtons() {
   const currentUser = localStorage.getItem("loggedInUser");
@@ -649,7 +680,17 @@ function goToMyProfile() {
   }
 }
 document.addEventListener("DOMContentLoaded", () => {
-    const pic = localStorage.getItem("profilePicture") || "/assets/Photos/default.png";
+    const pic = localStorage.getItem("profilePic") || "/assets/Photos/default.png";
     const img = document.getElementById("profilePic");
     if (img) img.src = pic;
   });
+  document.addEventListener("DOMContentLoaded", () => {
+  const username = localStorage.getItem("loggedInUser");
+  const profilePic = localStorage.getItem("profilePic") || "/assets/Photos/defaultprfl.png";
+  const fullName = localStorage.getItem("fullName") || ""; // אם שמרת את זה
+
+  document.getElementById("suggestionImage").src = profilePic;
+  document.getElementById("suggestionUsername").textContent = username;
+  document.getElementById("suggestionFullName").textContent = fullName;
+  document.getElementById("switchButton").setAttribute("data-username", username);
+});

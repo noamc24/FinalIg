@@ -1,14 +1,24 @@
+const fs = require('fs');
+
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
+
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const app = express();
+const router = express.Router();
+
 
 // Middlewares
-app.use(express.json());
+app.use(express.json({ limit: '1000mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1000mb' }));
 app.use(express.static(path.join(__dirname, 'html')));
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use("/uploads", express.static('uploads'));
 
 // Mongo connection
 mongoose.connect('mongodb://localhost:27017/new-users')

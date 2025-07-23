@@ -10,6 +10,10 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  profilePic: {
+  type: String,
+  default: "/assets/Photos/defaultprfl.png"
+  },
   caption: {
     type: String,
     default: ""
@@ -19,7 +23,7 @@ const postSchema = new mongoose.Schema({
     required: false
   },
   mediaType: {
-    type: String, // "image" או "video"
+    type: String,
     required: true
   },
   createdAt: {
