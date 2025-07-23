@@ -1,8 +1,11 @@
 const fs = require('fs');
 
-if (!fs.existsSync('uploads')) {
-  fs.mkdirSync('uploads');
-}
+["uploads", "assets"].forEach(folder => {
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder);
+    console.log(`תיקייה ${folder} נוצרה`);
+  }
+});
 
 const express = require('express');
 const path = require('path');
