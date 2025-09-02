@@ -29,12 +29,12 @@ mongoose
   .catch((err) => console.error("❌ Mongo Error:", err));
 
 // API Routes
-const authRoutes = require("./routes/auth");
+const authRouter = require("./routes/authRoute");
 const postRoutes = require("./routes/posts");
 const userRoutes = require("./routes/user");
 const statsRoutes = require("./routes/stats");
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRouter);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/stats", statsRoutes);
