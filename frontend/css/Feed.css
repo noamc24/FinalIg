@@ -160,6 +160,7 @@
       font-size: 2vh;
     }
     .leftNav{
+      z-index: 1;
       margin-left: 25px;
       margin-top: 1px;
       position: fixed;
@@ -712,7 +713,7 @@ background-color: transparent;
   justify-content: space-between;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1500px) {
   .sidebar-wrapper {
     flex-direction: column;
   }
