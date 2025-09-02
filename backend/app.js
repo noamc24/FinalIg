@@ -31,12 +31,12 @@ mongoose
 // API Routes
 const authRouter = require("./routes/authRoute");
 const postRoutes = require("./routes/posts");
-const userRoutes = require("./routes/user");
-const statsRoutes = require("./routes/stats");
+const authRouter = require("./routes/authRoute");
+const usersRouter = require("./routes/userRoute");
 
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/users", usersRouter);
 app.use("/api/stats", statsRoutes);
 
 // 👇 זה חשוב מאוד שיהיה כאן (לפני ה-listen)
