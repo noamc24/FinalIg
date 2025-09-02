@@ -6,8 +6,8 @@ const userSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
- followers: [{ type: String }], 
-  following: [{ type: String }]  , 
+ followers: [{ type: String }],   // מי עוקב אחרי המשתמש
+  following: [{ type: String }]  ,  // אחרי מי המשתמש עוקב
 groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }]
 
 }, { timestamps: true });

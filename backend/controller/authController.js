@@ -5,6 +5,7 @@ const User = require("../models/userModel");
 const JWT_SECRET = process.env.JWT_SECRET || "mySecretKey";
 
 const authController = {
+
   register: async (req, res) => {
     try {
       const { username, fullName, email, password, profilePic } = req.body;
