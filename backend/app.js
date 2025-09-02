@@ -32,11 +32,13 @@ mongoose
 const authRouter = require("./routes/authRoute");
 const usersRouter = require("./routes/userRoute");
 const postsRouter = require("./routes/postsRoute");
+const groupsRouter = require("./routes/groupRoute");
 const postsExtrasRouter = require("./routes/postsExtrasRoute");
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/posts", postsRouter);
+app.use("/api/groups", groupsRouter);
 app.use("/api/post-extras", postsExtrasRouter);
 
 // 👇 זה חשוב מאוד שיהיה כאן (לפני ה-listen)
