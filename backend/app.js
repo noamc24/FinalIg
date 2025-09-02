@@ -1,17 +1,10 @@
-const fs = require("fs");
-
-["uploads", "assets"].forEach((folder) => {
-  if (!fs.existsSync(folder)) {
-    fs.mkdirSync(folder);
-    console.log(`תיקייה ${folder} נוצרה`);
-  }
-});
-
+const { connectDB } = require("./config/db");
 const express = require("express");
 const path = require("path");
+const cors = require("cors");
 const mongoose = require("mongoose");
 const app = express();
-const router = express.Router();
+const PORT = 3000;
 
 // Middlewares
 app.use(express.json({ limit: "1000mb" }));
@@ -21,6 +14,7 @@ app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/uploads", express.static("uploads"));
+app.use(cors());
 
 // Mongo connection
 mongoose
@@ -47,7 +41,7 @@ app.get("/profile/:username", (req, res) => {
 });
 
 // Start the server
-app.listen(3000, () => {
-  console.log("🚀 Server running on http://localhost:3000");
+connectDB().then(() => {
+  app.listen(PORT, () => console.log(`🚀 http://localhost:${PORT}`));
 });
 app.use(express.static("assets"));
