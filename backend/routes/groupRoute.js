@@ -1,7 +1,7 @@
 const express = require("express");
 const groupController = require("../controller/groupController");
 
-const router = express.Router();
+const router = express.Router() ;
 
 router.get("/:group", groupController.getGroup);
 
