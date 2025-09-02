@@ -1,44 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>@username • Profile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="/css/index.css" />
-  <link rel="stylesheet" href="/css/profile.css" />
-  <link rel="shortcut icon" href="/assets/icons/instagram-icon-tab.png" />
 
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>הרשמה • אינסטגרם</title>
+  <link rel="stylesheet" href="../css/signUp.css">
 </head>
-<body class="bg-light">
-  <div class="container py-5">
-    <!-- Profile Header -->
-    <div class="row mb-4 align-items-center">
-      <div class="col-md-3 text-center">
-        <img id="profilePic" class="profile-img" alt="Profile Picture">
-      </div>
-      <div class="col-md-9">
-        <div class="d-flex align-items-center mb-3">
-          <h2 id="username" class="me-3">@username</h2>
-          <button class="btn btn-outline-secondary" id="actionBtn">Edit Profile</button>
-        </div>
-        <div class="stats mb-2">
-          <span id="posts-count">0 posts</span>
-          <span id="followersCount">0 followers</span>
-          <span id="followingCount">0 following</span>
-        </div>
-        <p id="bio" class="bio">No bio available.</p>
-      </div>
+<body>
+  <div class="container">
+    <div class="signup-box">
+<img class="logo-img" src="../assets/icons/instagramtitle.png" alt="Instagram Logo" />
+      <p class="desc">הירשם כדי לראות תמונות וסרטונים מחברים.</p>
+
+      <button class="fb-btn">התחבר עם פייסבוק</button>
+      <div class="divider"><span>או</span></div>
+
+      <form id="registerForm">
+        <input type="text" id="email" name="email" placeholder="אימייל" required>
+        <input type="text" id="fullName" name="fullName" placeholder="שם מלא" required>
+        <input type="text" id="username" name="username" placeholder="שם משתמש" required>
+        <input type="password" id="password" name="password" placeholder="סיסמה" required>
+
+        <button type="submit"  class="signup-btn">הרשמה</button>
+      </form>
+
+      <p class="terms">
+        על־ידי ההרשמה, אתה מסכים ל־
+        <a href="#">תנאים</a>, 
+        <a href="#">מדיניות הפרטיות</a> ו־
+        <a href="#">קובצי העוגיות</a> שלנו.
+      </p>
     </div>
 
-    <hr style="margin: 30px 0;">
+    <div class="login-prompt">
+  יש לך חשבון? <a href="login.html">התחבר</a>
+</div>
 
-    <!-- Posts Grid -->
-    <div id="user-posts" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-      <!-- Posts will be inserted here dynamically -->
     </div>
   </div>
+  <div class="get-app">
+  <p>הורד את האפליקציה.</p>
+<div class="get-the-app">
+          <p>הורד/הורידי את האפליקציה</p>
+          <div class="footer-logos">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.instagram.android&referrer=ig_mid%3DEBBA0F6C-10A2-41F9-A2C4-B46400E69CA1%26utm_content%3Dlo%26utm_source%3Dinstagramweb%26utm_medium%3Dbadge">
+              <img class="title" src="../assets/icons/google-play.png" target="_blank" alt="Instagram Logo">
+            </a>
+            <a href="https://www.microsoft.com/en-us/">
+              <img class="title" src="../assets/icons/microsoft.png" target="_blank" alt="Instagram Logo" />
+            </a>
+          </div>
+        </div>
+     
+<footer class="footer">
+  <div class="footer-links">
+    <a href="#">Meta</a>
+    <a href="#">אודות</a>
+    <a href="#">בלוג</a>
+    <a href="#">משרות</a>
+    <a href="#">עזרה</a>
+    <a href="#">API</a>
+    <a href="#">פרטיות</a>
+    <a href="#">תנאים</a>
+    <a href="#">מיקומים</a>
+    <a href="#">Instagram Lite</a>
+    <a href="#">Threads</a>
+    <a href="#">העלאת אנשי קשר</a>
+    <a href="#">Meta Verified</a>
+    <a href="#">הסכמי יישוב</a>
+  </div>
+  <div class="footer-bottom">
+    <span>עברית</span>
+    <span>© 2025 Instagram מ־Meta</span>
+  </div>
+</footer>
+  <script src="../js/Auth.js"></script>x
 
-  <script src="/js/profile.js"></script>
+
 </body>
 </html>
