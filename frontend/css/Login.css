@@ -167,7 +167,7 @@ body {
   color: var(--color-text-muted);
 }
 .language-dropdown select{
-  background-color: #000;
+  background-color: #ffffff;
   color: var(--color-text-muted);
   border: none;
   outline: none;
