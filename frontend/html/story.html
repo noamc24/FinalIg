@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stories • FinalIg</title>
+  <link rel="stylesheet" href="../css/story.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="title">Stories</div>
+      <div class="user" id="current-user">
+        <img id="current-user-pic" src="/assets/Photos/defaultprfl.png" alt="Profile" />
+        <span id="current-user-name">אורח</span>
+      </div>
+    </header>
+
+    <!-- Uploader -->
+    <section class="uploader">
+      <div class="row">
+        <input type="text" id="caption" placeholder="כתוב כיתוב לסטורי (אופציונלי)" />
+        <input type="file" id="media" accept="image/*,video/*" />
+      </div>
+      <div class="row">
+        <button id="post-story">פרסם סטורי</button>
+        <span class="hint"></span>
+      </div>
+    </section>
+
+    <!-- Stories rail -->
+    <section class="stories-rail" id="stories-rail" aria-live="polite"></section>
+  </div>
+
+  <!-- Viewer Modal -->
+  <div class="viewer" id="viewer" aria-hidden="true">
+    <div class="card">
+      <div class="progress" id="progress"></div>
+      <header>
+        <img id="viewer-avatar" src="/assets/Photos/defaultprfl.png" alt="avatar" />
+        <div class="meta">
+          <span class="name" id="viewer-name">username</span>
+          <span class="time" id="viewer-time">לפני רגע</span>
+        </div>
+        <button class="close" id="viewer-close" aria-label="סגור">✕</button>
+      </header>
+      <div class="media" id="viewer-media"></div>
+    </div>
+  </div>
+
+  <script src="../js/story.js"></script>
+</body>
+</html>
