@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
    if (profilePicElem) {
    console.log("🧠 user.profilePic מהשרת:", user.profilePic);
   
-   const finalPic = user.profilePic || "/assets/Photos/defaultPrfl.png";
+   const finalPic = user.profilePic ;
    profilePicElem.src = finalPic;
 
    console.log("📷 src שהוגדר בפועל:", profilePicElem.src);
