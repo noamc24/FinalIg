@@ -23,7 +23,7 @@ const authController = {
         fullName,
         email,
         password: hashedPassword,
-        profilePic: profilePic || "/assets/Photos/defaultprfl.png"
+        profilePic: profilePic ,
       });
 
       await newUser.save();
@@ -54,7 +54,6 @@ const authController = {
         JWT_SECRET,
         { expiresIn: "1h" }
       );
-
       res.json({
         success: true,
         token,

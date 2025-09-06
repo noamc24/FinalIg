@@ -2,7 +2,13 @@ let currentPost = null;
 const API_BASE = "http://localhost:3000";
 let currentPostId = null;
 
-const profilePic = localStorage.getItem("profilePic") || "/assets/Photos/defaultprfl.png";
+const profilePic = localStorage.getItem("profilePic");
+const suggestionImage = document.getElementById("suggestionImage");
+const profilePicSideBar = document.getElementById("profilePicSideBar");
+
+suggestionImage.src = profilePic;
+profilePicSideBar.src =profilePic;
+
 const username = localStorage.getItem("loggedInUser");
 document.addEventListener("DOMContentLoaded", () => {
   const username = localStorage.getItem("loggedInUser");
@@ -232,9 +238,7 @@ async function handlePostUpload() {
   const file = document.getElementById("mediaInput").files[0];
   const username = localStorage.getItem("loggedInUser");
   const profilePic =
-    localStorage.getItem("profilePic") ||
-    `${API_BASE}/assets/Photos/defaultprfl.png`;
-
+    localStorage.getItem("profilePic");
   if (!username) return alert("משתמש לא מחובר!");
   if (!caption || !file) return alert("נא למלא את כל השדות");
 
@@ -677,7 +681,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const isNotMe = post.username !== currentUser;
 const profilePic = post.profilePic?.startsWith("http")
   ? post.profilePic
-  : `${API_BASE}${post.profilePic || "/assets/Photos/defaultprfl.png"}`;
+  : `${API_BASE}${post.profilePic}`;
 
     let followButtonHTML = "";
     if (isNotMe) {

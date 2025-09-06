@@ -128,7 +128,6 @@ const postsExtrasController = {
     }
   },
   updateComment: async (req, res) => {
-  console.log("e")
   try {
     const { postId, commentId, username, text } = req.body;
 

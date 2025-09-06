@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // שמירת נתוני התחברות
           localStorage.setItem("token", data.token);
           localStorage.setItem("loggedInUser", data.user.username);
-          localStorage.setItem("profilePic", data.user.profilePic || "/assets/Photos/defaultprfl.png");
+          localStorage.setItem("profilePic", data.user.profilePic);
 
           alert("התחברת בהצלחה!");
           window.location.href = "feed.html";

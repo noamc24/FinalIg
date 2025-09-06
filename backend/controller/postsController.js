@@ -37,18 +37,16 @@ updatePost: async (req, res) => {
       const { username, caption, mediaType, profilePic } = req.body;
       const user = await User.findOne({ username });
       if (!user) return res.status(404).json({ error: "User not found" });
-
       const newPost = new Post({
         userId: user._id,
         username: user.username,
-        profilePic: profilePic || "/assets/Photos/defaultprfl.png",
+        profilePic: profilePic,
         caption,
         mediaUrl: req.file ? `/uploads/${req.file.filename}` : null,
         mediaType,
       });
 
       await newPost.save();
-
       res.status(201).json({
         success: true,
         post: newPost   // 👈 מחזירים את הפוסט המלא
