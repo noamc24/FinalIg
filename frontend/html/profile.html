@@ -1,40 +1,170 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <title>Profile</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="/css/index.css" />
-    <link rel="stylesheet" href="/css/profile.css" />
-    <link rel="shortcut icon" href="/assets/icons/instagram-icon-tab.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>הפרופיל שלי</title>
 
-</head>
-<body>
-  <div class="container">
-    <div class="profile-header">
-      <img id="profilePic" class="profile-pic" alt="Profile Picture" />
-      <div class="profile-info">
-        <div class="d-flex align-items-center gap-3">
-          <h2 id="username">@username</h2>
-          <button id="actionBtn" class="edit-btn">Edit Profile</button>
-          <button id="actionBtn" class="edit-btn">View Arcive</button>
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
+    <style>
+      body { background: #fafafa; }
+      .profile-header {
+        background: #fff; border: 1px solid #e6e6e6; border-radius: 16px;
+        padding: 24px; margin-top: 24px;
+      }
+      .avatar-wrap {
+        position: relative; width: 140px; height: 140px;
+      }
+      .avatar-wrap img {
+        width: 140px; height: 140px; object-fit: cover; border-radius: 50%;
+        border: 2px solid #eee;
+      }
+      .avatar-action {
+        position: absolute; bottom: 6px; left: 6px;
+        background: rgba(0,0,0,.6); color: #fff; border-radius: 999px;
+        padding: 6px 10px; font-size: 14px; display: flex; align-items: center; gap: 6px;
+        cursor: pointer; transition: .2s;
+      }
+      .avatar-action:hover { background: rgba(0,0,0,.75); }
+      .stats { gap: 24px; }
+      .stats .num { font-weight: 700; }
+      .pill {
+        border: 1px solid #e6e6e6; background: #fff; border-radius: 999px; padding: 8px 16px;
+      }
+      .tabs { gap: 24px; border-bottom: 1px solid #e6e6e6; margin-top: 24px; }
+      .tabs button {
+        border: none; background: transparent; padding: 12px 0; font-weight: 600; color: #777;
+      }
+      .tabs button.active { color: #111; border-bottom: 2px solid #111; }
+      .gallery {
+        display: grid; gap: 8px; margin-top: 16px;
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .gallery .tile {
+        position: relative; background: #ddd; aspect-ratio: 1/1; overflow: hidden; border-radius: 8px; cursor: pointer;
+      }
+      .gallery .tile img, .gallery .tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .gallery .tile .badge {
+        position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.6); color: #fff; border-radius: 8px;
+        padding: 2px 6px; font-size: 12px; display: flex; align-items: center; gap: 4px;
+      }
+      @media (max-width: 768px) {
+        .profile-header { padding: 16px; border-radius: 12px; }
+        .avatar-wrap { width: 108px; height: 108px; }
+        .avatar-wrap img { width: 108px; height: 108px; }
+      }
+
+      /* Modal media */
+      .post-modal-media img, .post-modal-media video {
+        width: 100%; height: auto; max-height: 70vh; object-fit: cover; border-radius: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+
+      <!-- HEADER -->
+      <div class="profile-header d-flex align-items-center justify-content-between flex-wrap">
+        <div class="d-flex align-items-center gap-4">
+          <div class="avatar-wrap">
+            <img id="profileAvatar" alt="Profile">
+            <div class="avatar-action" id="changeAvatarBtn">
+              <i class='bx bx-camera'></i> שנה תמונה
+            </div>
+            <input type="file" id="avatarInput" accept="image/*" hidden>
+          </div>
+
+          <div>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <h2 class="m-0" id="profileUsername">username</h2>
+              <span id="profileHandle" class="text-muted">@username</span>
+              <button class="btn btn-sm btn-outline-dark pill" id="editBioBtn">
+                <i class='bx bx-edit-alt'></i> עריכת פרופיל
+              </button>
+            </div>
+
+            <div class="d-flex stats mt-3">
+              <div><span class="num" id="postsCount">0</span> פוסטים</div>
+              <div><span class="num" id="followersCount">-</span> עוקבים</div>
+              <div><span class="num" id="followingCount">-</span> נעקבים</div>
+            </div>
+
+            <div class="mt-3">
+              <div class="fw-semibold" id="profileFullName"></div>
+              <div id="profileBio" class="text-body-secondary"></div>
+            </div>
+          </div>
         </div>
-        <div class="profile-stats">
-          <span><strong id="posts-count">0</strong> posts</span>
-          <span><strong id="followersCount">0</strong> followers</span>
-          <span><strong id="followingCount">0</strong> following</span>
+
+        <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
+          <a class="btn btn-light pill" href="feed.html">
+            <i class='bx bx-home-alt-2'></i> פיד
+          </a>
+          <button class="btn btn-dark pill" id="logoutBtn">
+            <i class='bx bx-log-out-circle'></i> התנתקות
+          </button>
         </div>
-        <div class="profile-bio" id="bio">No bio available.</div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs d-flex">
+        <button class="active" id="tabPosts"><i class='bx bx-grid-alt'></i> פוסטים</button>
+        <button disabled title="בקרוב"><i class='bx bx-movie-play'></i> רילס</button>
+        <button disabled title="בקרוב"><i class='bx bx-bookmark'></i> שמורים</button>
+        <button disabled title="בקרוב"><i class='bx bx-purchase-tag'></i> תיוגים</button>
+      </div>
+
+      <!-- GALLERY -->
+      <div id="gallery" class="gallery"></div>
+
+      <!-- EMPTY STATE -->
+      <div id="emptyState" class="text-center text-muted py-5 d-none">
+        <i class='bx bx-image-alt' style="font-size:64px;"></i>
+        <p class="mt-2">עדיין אין פוסטים להצגה</p>
       </div>
     </div>
-    <hr>
-    <div id="user-posts" class="posts-grid">
-      <!-- JS יכניס את הפוסטים לכאן -->
-    </div>
-  </div>
 
-  <script src="/js/profile.js"></script>
-</body>
+    <!-- Post Modal -->
+    <div class="modal fade" id="postModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="postModalTitle"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="סגור"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-4">
+              <div class="col-12 col-lg-7 post-modal-media" id="postModalMedia"></div>
+              <div class="col-12 col-lg-5">
+                <div class="d-flex align-items-center gap-2">
+                  <img id="postModalAvatar" class="rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                  <div>
+                    <div class="fw-semibold" id="postModalUser"></div>
+                    <div class="text-muted small" id="postModalTime"></div>
+                  </div>
+                </div>
+                <hr>
+                <div id="postModalCaption" class="mb-3"></div>
+                <div class="text-muted small">
+                  <span id="postModalLikes">0</span> לייקים •
+                  <span id="postModalComments">0</span> תגובות
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">סגור</button>
+            <button class="btn btn-primary" id="toFeedBtn"><i class='bx bx-home-alt-2'></i> לפיד</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/profile.js"></script>
+  </body>
 </html>

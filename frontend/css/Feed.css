@@ -735,3 +735,18 @@ background-color: transparent;
   max-width: 600px;
   margin: auto;
 }
+.canvas-box{
+  display:flex;
+  justify-content:center;   /* מרכז אופקי */
+  padding-top:8px;          /* קצת ריווח מלמעלה */
+}
+
+.square-canvas{
+  width: clamp(240px, 60vmin, 520px); /* ריבוע גמיש ונעים */
+  aspect-ratio: 1 / 1;               /* מבטיח ריבוע */
+  display:block;
+  margin: 0 auto;
+  background:#fff;
+  border:1px solid #e5e5e5;
+  border-radius:12px;
+}
