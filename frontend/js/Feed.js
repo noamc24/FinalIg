@@ -232,7 +232,7 @@ async function toggleLike(button, postId) {
 }
 window.toggleLike = toggleLike;
 
-// ===== יצירת פוסט (כולל קנבס) =====
+// ===== יצירת פוסט =====
 async function handlePostUpload() {
   const caption = document.getElementById("captionInput").value.trim();
   const fileInput = document.getElementById("mediaInput");
