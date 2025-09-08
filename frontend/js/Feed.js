@@ -5,7 +5,6 @@ let pendingCanvasBlob = null; // תמונת הקנבס לפני העלאה
 const DEFAULT_PROFILE = "../assets/Photos/userp.jpg";
 
 /* ---------- Helpers ---------- */
-// אסקייפ לערכי HTML/Attributes
 function escAttr(s) {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -14,13 +13,12 @@ function escAttr(s) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 }
-// פתרון כללי ל-URL (http/data/blob, נתיב שמתחיל ב-/, או נתיב אססט יחסי)
 function resolveUrl(src, fallback = "") {
   if (!src) return fallback;
   const s = String(src).trim();
   if (/^(https?:|data:|blob:)/i.test(s)) return s;
   if (s.startsWith("/")) return API_BASE + s;
-  return s; // נתיב אססט יחסי כמו ../assets/...
+  return s;
 }
 
 /* ---------- תמונת פרופיל בסיידבר ---------- */
@@ -38,28 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
     img.onerror = () => { img.src = DEFAULT_PROFILE; };
   });
 
-  if (!validStored) {
-    localStorage.setItem("profilePic", DEFAULT_PROFILE);
-  }
+  if (!validStored) localStorage.setItem("profilePic", DEFAULT_PROFILE);
 });
 
-/* ---------- אימות התחברות ושמירת שם משתמש ---------- */
+/* ---------- אימות התחברות ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   const username = localStorage.getItem("loggedInUser");
-  if (!username) {
-    window.location.href = "login.html";
-    return;
-  }
+  if (!username) { window.location.href = "login.html"; return; }
   localStorage.setItem("username", username);
 });
 
-/* ---------- טעינת פיד, מצב כהה, כפתור גלילה, Follow ---------- */
+/* ---------- טעינה ראשונית, מצב כהה, גלילה, Follow יחיד ---------- */
 document.addEventListener("DOMContentLoaded", async () => {
   const username = localStorage.getItem("loggedInUser");
-  if (!username) {
-    window.location.href = "login.html";
-    return;
-  }
+  if (!username) { window.location.href = "login.html"; return; }
 
   try {
     const res = await fetch(`${API_BASE}/api/posts/feed/${username}`);
@@ -80,20 +70,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         icon.classList.toggle("bx-sun", isDark);
         icon.classList.toggle("bx-moon", !isDark);
       }
-      if (typeof updateLogoForTheme === "function") {
-        updateLogoForTheme(isDark);
-      }
+      if (typeof updateLogoForTheme === "function") updateLogoForTheme(isDark);
     });
   });
 
-  // theme on load
   if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark-mode");
     const icon = document.querySelector(".toggle-mode i");
-    if (icon) {
-      icon.classList.remove("bx-moon");
-      icon.classList.add("bx-sun");
-    }
+    if (icon) { icon.classList.remove("bx-moon"); icon.classList.add("bx-sun"); }
   }
 
   const scrollBtn = document.getElementById("scrollToTopBtn");
@@ -101,11 +85,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!scrollBtn) return;
     scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
   });
-  scrollBtn?.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  scrollBtn?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 
-  // follow button (nav יחיד עם id יחיד אם יש)
+  // כפתור Follow יחיד בניווט (אם קיים)
   const button = document.getElementById("follow-button");
   if (button) {
     const followee = button.dataset.username;
@@ -116,14 +98,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const res = await fetch(`/api/users/${action}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ followerUsername: follower, followeeUsername: followee }),
+          body: JSON.stringify({ followerUsername: follower, followeeUsername: followee })
         });
         const result = await res.json();
-        if (res.ok) {
-          button.textContent = action === "follow" ? "unfollow" : "follow";
-        } else {
-          alert(result.error || "שגיאה בבקשה");
-        }
+        if (res.ok) button.textContent = action === "follow" ? "unfollow" : "follow";
+        else alert(result.error || "שגיאה בבקשה");
       } catch (err) {
         console.error("שגיאה בבקשת follow/unfollow:", err);
         alert("שגיאה בשרת");
@@ -137,23 +116,17 @@ let isSearch = false;
 function changesearch() {
   if (!isSearch) {
     document.getElementById("searchdiv").innerHTML = `
-      <a href="#" class="text-dark ms-1" onclick="changesearch()">
-        <i class="bx bx-search fs-2"></i>
-      </a>
-      <div class="search-bar d-flex align-items-center ms-1" style="max-width: 244px; height: 35px;">
+      <a href="#" class="text-dark ms-1" onclick="changesearch()"><i class="bx bx-search fs-2"></i></a>
+      <div class="search-bar d-flex align-items-center ms-1" style="max-width:244px;height:35px;">
         <input type="search" id="searchInput" class="form-control form-control-sm bg-transparent text-light border-0 shadow-none" placeholder="Search...">
         <i class='bx bx-search'></i>
-      </div>
-    `;
+      </div>`;
     activateSearchFilter(document.getElementById("searchInput"));
     isSearch = true;
   } else {
     document.getElementById("searchdiv").innerHTML = `
-      <a href="#" class="text-dark ms-1" onclick="changesearch()">
-        <i class="bx bx-search fs-2"></i>
-      </a>
-      <p class="ms-3 fs-5 mb-0 fw-bold" onclick="changesearch()"> Search</p>
-    `;
+      <a href="#" class="text-dark ms-1" onclick="changesearch()"><i class="bx bx-search fs-2"></i></a>
+      <p class="ms-3 fs-5 mb-0 fw-bold" onclick="changesearch()"> Search</p>`;
     isSearch = false;
   }
 }
@@ -183,7 +156,7 @@ async function toggleLike(button, postId) {
     const res = await fetch(`${API_BASE}/api/post-extras/${action}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ postId, username }),
+      body: JSON.stringify({ postId, username })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "שגיאה בשרת");
@@ -230,11 +203,12 @@ async function handlePostUpload() {
     if (!res.ok) throw new Error(data.error || "שגיאה ביצירת פוסט");
     const post = data.post;
 
+    const mediaSrc = resolveUrl(`${API_BASE}${post.mediaUrl}`);
     const mediaHTML =
       post.mediaType === "image"
-        ? `<img src="${escAttr(resolveUrl(`${API_BASE}${post.mediaUrl}`))}" class="post-image" />`
-        : `<video class="post-video" controls autoplay loop muted style="max-width:100%; height:auto;">
-             <source src="${escAttr(resolveUrl(`${API_BASE}${post.mediaUrl}`))}" type="video/mp4">
+        ? `<img src="${escAttr(mediaSrc)}" class="post-image" />`
+        : `<video class="post-video" controls autoplay loop muted style="max-width:100%;height:auto;">
+             <source src="${escAttr(mediaSrc)}" type="video/mp4">
              הדפדפן שלך לא תומך בניגון וידאו.
            </video>`;
 
@@ -267,9 +241,7 @@ async function handlePostUpload() {
           <span class="username">${escAttr(post.username)}</span> ${escAttr(post.caption)}
         </div>
         <div class="comments-list d-none"></div>
-      </div>
-    `;
-
+      </div>`;
     addPostToFeed(postHTML);
 
     document.getElementById("captionInput").value = "";
@@ -344,14 +316,11 @@ async function editSidebarComment(commentId, oldText) {
     const res = await fetch(`${API_BASE}/api/post-extras/comment`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ postId: currentPostId, commentId, username, text: newText }),
+      body: JSON.stringify({ postId: currentPostId, commentId, username, text: newText })
     });
     const data = await res.json();
-    if (data.success) {
-      loadComments(currentPostId);
-    } else {
-      alert(data.error || "שגיאה בעריכה");
-    }
+    if (data.success) loadComments(currentPostId);
+    else alert(data.error || "שגיאה בעריכה");
   } catch (err) {
     console.error("❌ שגיאה בעריכת תגובה:", err);
   }
@@ -369,17 +338,16 @@ async function loadComments(postId) {
 
 function renderComments(comments) {
   const container = document.getElementById("comments-list");
-  container.innerHTML = (comments || [])
-    .map((c) => `
+  container.innerHTML = (comments || []).map((c) => `
       <div class="comment d-flex justify-content-between align-items-center mb-2">
         <div><b>${escAttr(c.username)}</b>: ${escAttr(c.text)}</div>
         ${
           c.username === localStorage.getItem("loggedInUser")
-            ? `
-          <div>
-            <button class="btn btn-sm btn-warning me-1" onclick="editSidebarComment('${escAttr(c._id)}', '${escAttr(c.text)}')">✏️</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteSidebarComment('${escAttr(c._id)}')">🗑️</button>
-          </div>` : ""
+            ? `<div>
+                 <button class="btn btn-sm btn-warning me-1" onclick="editSidebarComment('${escAttr(c._id)}', '${escAttr(c.text)}')">✏️</button>
+                 <button class="btn btn-sm btn-danger" onclick="deleteSidebarComment('${escAttr(c._id)}')">🗑️</button>
+               </div>`
+            : ""
         }
       </div>`).join("");
   updateCommentCount(currentPost, comments.length);
@@ -391,15 +359,13 @@ async function deleteSidebarComment(commentId) {
     const res = await fetch(`${API_BASE}/api/post-extras/comment`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ postId: currentPostId, commentId, username }),
+      body: JSON.stringify({ postId: currentPostId, commentId, username })
     });
     const data = await res.json();
     if (data.success) {
       loadComments(currentPostId);
       renderComments(data.comments || []);
-    } else {
-      alert(data.error || "שגיאה במחיקה");
-    }
+    } else alert(data.error || "שגיאה במחיקה");
   } catch (err) {
     console.error("❌ שגיאה במחיקת תגובה:", err);
   }
@@ -446,15 +412,13 @@ async function submitSidebarComment() {
     const res = await fetch(`${API_BASE}/api/post-extras/comment`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ postId: currentPostId, username, text }),
+      body: JSON.stringify({ postId: currentPostId, username, text })
     });
     const data = await res.json();
     if (data.success) {
       renderComments(data.comments || []);
       document.getElementById("comment-text").value = "";
-    } else {
-      alert(data.error || "שגיאה בהוספת תגובה");
-    }
+    } else alert(data.error || "שגיאה בהוספת תגובה");
   } catch (err) {
     console.error("❌ שגיאה בהוספת תגובה:", err);
   }
@@ -474,7 +438,7 @@ document.getElementById("share-search")?.addEventListener("input", function () {
   });
 });
 
-/* ---------- אינדיקציית הקלדה בתגובות ---------- */
+/* ---------- הקלדה ---------- */
 let typingTimeout = null;
 document.getElementById("comment-text")?.addEventListener("input", () => {
   const indicator = document.getElementById("typing-indicator");
@@ -484,7 +448,7 @@ document.getElementById("comment-text")?.addEventListener("input", () => {
   typingTimeout = setTimeout(() => { indicator.style.display = "none"; }, 1500);
 });
 
-/* ---------- Follow כפתורים בפיד (אחיד) ---------- */
+/* ---------- Follow בפיד ---------- */
 function activateFollowButtons() {
   const currentUser = localStorage.getItem("loggedInUser");
   const buttons = document.querySelectorAll(".follow-button");
@@ -496,14 +460,11 @@ function activateFollowButtons() {
         const res = await fetch(`/api/users/${action}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ followerUsername: currentUser, followeeUsername: targetUser }),
+          body: JSON.stringify({ followerUsername: currentUser, followeeUsername: targetUser })
         });
         const result = await res.json();
-        if (res.ok) {
-          button.textContent = action === "follow" ? "Unfollow" : "Follow";
-        } else {
-          alert(result.error || "שגיאה בבקשת מעקב");
-        }
+        if (res.ok) button.textContent = action === "follow" ? "Unfollow" : "Follow";
+        else alert(result.error || "שגיאה בבקשת מעקב");
       } catch (err) {
         console.error("שגיאה בבקשת Follow/Unfollow:", err);
         alert("שגיאה בשרת");
@@ -511,7 +472,6 @@ function activateFollowButtons() {
     });
   });
 }
-// ביטול המימוש הכפול שהיה קודם
 
 async function checkFollowingStatus(currentUser, targetUser) {
   try {
@@ -524,7 +484,7 @@ async function checkFollowingStatus(currentUser, targetUser) {
   }
 }
 
-/* ---------- עימוד זמן "לפני X" ---------- */
+/* ---------- זמן יחסי ---------- */
 function formatTimeAgo(createdAt) {
   const now = new Date();
   const created = new Date(createdAt);
@@ -542,10 +502,7 @@ function formatTimeAgo(createdAt) {
 
 /* ---------- רינדור פיד ---------- */
 async function renderFeed(posts) {
-  if (!Array.isArray(posts)) {
-    console.error("Posts is not an array:", posts);
-    return;
-  }
+  if (!Array.isArray(posts)) { console.error("Posts is not an array:", posts); return; }
   const container = document.getElementById("feedContainer");
   const currentUser = localStorage.getItem("loggedInUser");
   container.innerHTML = "";
@@ -565,7 +522,7 @@ async function renderFeed(posts) {
     const mediaHTML =
       post.mediaType === "image"
         ? `<img src="${escAttr(mediaSrc)}" class="post-image" />`
-        : `<video class="post-video" controls autoplay loop muted style="max-width:100%; height:auto;">
+        : `<video class="post-video" controls autoplay loop muted style="max-width:100%;height:auto;">
              <source src="${escAttr(mediaSrc)}" type="video/mp4">
              הדפדפן שלך לא תומך בניגון וידאו.
            </video>`;
@@ -581,11 +538,7 @@ async function renderFeed(posts) {
             <img src="${escAttr(profilePic)}" class="avatar" />
             <span class="username d-flex">${escAttr(post.username)} <p class="ms-2 text-secondary">• ${escAttr(formatTimeAgo(post.createdAt))}</p></span>  
           </div>
-          ${
-            isNotMe
-              ? followButtonHTML
-              : `<i class='bx bx-trash post-delete-btn ms-3' onclick="deletePostRequest('${escAttr(post._id)}')" title="מחק פוסט"></i>`
-          }
+          ${isNotMe ? followButtonHTML : `<i class='bx bx-trash post-delete-btn ms-3' onclick="deletePostRequest('${escAttr(post._id)}')" title="מחק פוסט"></i>`}
         </div>
 
         <div class="post-image-container" ondblclick="showHeart(this)">
@@ -616,19 +569,13 @@ async function renderFeed(posts) {
         </div>
 
         <div class="comments-list d-none"></div>
-      </div>
-    `;
+      </div>`;
     container.insertAdjacentHTML("beforeend", postHTML);
   }
-  // אחרי שהפיד קיים בדום – מחברים מאזינים לכפתורי Follow
   activateFollowButtons();
 }
 
-/* ---------- ניווט לפרופיל ---------- */
-function goToMyProfile() { window.location.assign("profile.html"); }
-window.goToMyProfile = goToMyProfile;
-
-/* ---------- קנבס ציור – ייזום מלא ---------- */
+/* ---------- קנבס ציור ---------- */
 function initDrawCanvas() {
   const canvas = document.getElementById("drawCanvas");
   if (!canvas) return;
@@ -641,7 +588,6 @@ function initDrawCanvas() {
   const clearBtn = document.getElementById("clearCanvas");
   const undoBtn = document.getElementById("undoBtn");
   const useBtn = document.getElementById("useCanvasBtn");
-  const badge = document.getElementById("canvasAttachedBadge");
 
   let drawing = false;
   let lastX = 0, lastY = 0;
@@ -673,8 +619,7 @@ function initDrawCanvas() {
     const url = history[history.length - 1];
     const img = new Image();
     img.onload = () => {
-      const cssW = canvas.clientWidth;
-      const cssH = canvas.clientHeight;
+      const cssW = canvas.clientWidth, cssH = canvas.clientHeight;
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, cssW, cssH);
       ctx.drawImage(img, 0, 0, cssW, cssH);
@@ -694,48 +639,27 @@ function initDrawCanvas() {
   }
   function draw(x, y) {
     if (!drawing) return;
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(x, y);
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
     [lastX, lastY] = [x, y];
   }
-  function endDraw() {
-    if (!drawing) return;
-    drawing = false;
-    saveSnapshot();
-  }
+  function endDraw() { if (!drawing) return; drawing = false; saveSnapshot(); }
 
-  // עכבר
-  canvas.addEventListener("mousedown", (e) => {
-    const r = canvas.getBoundingClientRect();
-    startDraw(e.clientX - r.left, e.clientY - r.top);
-  });
-  window.addEventListener("mousemove", (e) => {
-    if (!drawing) return;
-    const r = canvas.getBoundingClientRect();
-    draw(e.clientX - r.left, e.clientY - r.top);
-  });
+  canvas.addEventListener("mousedown", (e) => { const r = canvas.getBoundingClientRect(); startDraw(e.clientX - r.left, e.clientY - r.top); });
+  window.addEventListener("mousemove", (e) => { if (!drawing) return; const r = canvas.getBoundingClientRect(); draw(e.clientX - r.left, e.clientY - r.top); });
   window.addEventListener("mouseup", endDraw);
   window.addEventListener("mouseleave", endDraw);
 
-  // מסך מגע
   canvas.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    const t = e.touches[0];
-    const r = canvas.getBoundingClientRect();
+    e.preventDefault(); const t = e.touches[0]; const r = canvas.getBoundingClientRect();
     startDraw(t.clientX - r.left, t.clientY - r.top);
   }, { passive: false });
   canvas.addEventListener("touchmove", (e) => {
-    e.preventDefault();
-    const t = e.touches[0];
-    const r = canvas.getBoundingClientRect();
+    e.preventDefault(); const t = e.touches[0]; const r = canvas.getBoundingClientRect();
     draw(t.clientX - r.left, t.clientY - r.top);
   }, { passive: false });
   canvas.addEventListener("touchend", endDraw);
   canvas.addEventListener("touchcancel", endDraw);
 
-  // שליטה
   sizeEl.addEventListener("input", () => { sizeValEl.textContent = `${sizeEl.value}px`; });
   eraserBtn.addEventListener("click", () => {
     isEraser = !isEraser;
@@ -743,11 +667,8 @@ function initDrawCanvas() {
     eraserBtn.classList.toggle("btn-outline-secondary", !isEraser);
   });
   clearBtn?.addEventListener("click", () => {
-    const cssW = canvas.clientWidth;
-    const cssH = canvas.clientHeight;
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, cssW, cssH);
-    saveSnapshot();
+    const cssW = canvas.clientWidth, cssH = canvas.clientHeight;
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, cssW, cssH); saveSnapshot();
   });
   undoBtn?.addEventListener("click", restoreSnapshot);
 
@@ -779,28 +700,23 @@ function initDrawCanvas() {
   });
 
   window.addEventListener("resize", () => {
-    if (document.getElementById("drawModal")?.classList.contains("show")) {
-      resizeCanvas();
-    }
+    if (document.getElementById("drawModal")?.classList.contains("show")) resizeCanvas();
   });
 }
 document.addEventListener("DOMContentLoaded", initDrawCanvas);
 
-/* ---------- שתוף ---------- */
+/* ---------- שיתוף ---------- */
 let sharedPost = null;
 function openShareModal() {
   const modal = document.getElementById("share-modal");
   if (!modal) return console.error("❌ לא נמצא מודאל עם id=share-modal");
   modal.classList.remove("d-none");
   modal.style.display = "flex";
-  const successMsg = document.getElementById("share-success");
-  if (successMsg) successMsg.classList.add("d-none");
+  document.getElementById("share-success")?.classList.add("d-none");
 }
-function closeShareModal() {
-  document.getElementById("share-modal").classList.add("d-none");
-}
-function sendToFriend(friendElement) {
-  const friendName = friendElement.textContent.trim();
+function closeShareModal() { document.getElementById("share-modal").classList.add("d-none"); }
+function sendToFriend(el) {
+  const friendName = el.textContent.trim();
   const success = document.getElementById("share-success");
   success.textContent = `✅ הפוסט נשלח ל-${friendName}!`;
   success.classList.remove("d-none");
@@ -818,18 +734,12 @@ async function loadTechNewsWidget() {
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error("bad response");
     const list = Array.isArray(data.articles) ? data.articles : [];
-    if (!list.length) {
-      box.innerHTML = `<p class="text-muted m-0">אין פריטים להציג כרגע.</p>`;
-      return;
-    }
+    if (!list.length) { box.innerHTML = `<p class="text-muted m-0">אין פריטים להציג כרגע.</p>`; return; }
     box.innerHTML = list.map((a) => `
       <div class="news-item">
-        <a href="${escAttr(a.url)}" target="_blank" rel="noopener noreferrer">
-          ${escAttr(a.title)}
-        </a>
+        <a href="${escAttr(a.url)}" target="_blank" rel="noopener noreferrer">${escAttr(a.title)}</a>
         <small>by ${escAttr(a.by || "unknown")} • ${escAttr(formatTimeAgo(a.time * 1000))}</small>
-      </div>
-    `).join("");
+      </div>`).join("");
   } catch (err) {
     console.error("TechNews error:", err);
     box.innerHTML = `<p class="text-muted m-0">לא ניתן לטעון חדשות כרגע.</p>`;

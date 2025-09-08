@@ -1,12 +1,13 @@
-* body {
-    margin: 0;
-    font-family: sans-serif;
-    background-color: #fafafa;
-    padding-bottom: 80px;
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: #fafafa;
+  padding-bottom: 80px;
 
   --comments-bg: #ffffff;
-  --comments-color: #000000
-  }
+  --comments-color: #000000; /* <- חשוב הסמי-קולון */
+}
+
 
   .dark-mode {
   background-color: #121212 !important;
@@ -751,6 +752,7 @@ background-color: transparent;
   border-radius:12px;
 }
 /* --- Tech News Widget --- */
+/* --- Tech News Widget --- */
 .news-widget{
   background: #fff;
   border: 1px solid #ddd;
@@ -763,22 +765,25 @@ background-color: transparent;
   margin-bottom: 8px;
 }
 .news-list .news-item{
-  margin-bottom: 10px;
-  line-height: 1.25;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  line-height: 1.3;
 }
-.news-list .news-item:last-child{ margin-bottom: 0; }
+.news-list .news-item:last-child{ border-bottom: 0; }
 .news-item a{
+  display: block;
   color: inherit;
   text-decoration: none;
+  font-weight: 600;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 .news-item a:hover{ text-decoration: underline; }
-.news-item small{ color: gray; display: block; }
+.news-item small{ color: gray; display: block; margin-top: 3px; }
 
-/* Dark mode התאמה */
-.dark-mode .news-widget{
-  background-color: #1e1e1e;
-  border-color: #444;
-}
-.dark-mode .news-item small{
-  color: #aaa;
-}
+/* Dark mode */
+.dark-mode .news-widget{ background-color: #1e1e1e; border-color: #444; }
+.dark-mode .news-list .news-item{ border-color: #333; }
+.dark-mode .news-item small{ color: #aaa; }
