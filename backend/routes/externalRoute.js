@@ -39,7 +39,15 @@ router.get("/suggestions", async (req, res) => {
     }));
     res.json(mapped);
   } catch (err) {
-    res.status(502).json({ error: "Failed to fetch suggestions", details: String(err?.message || err) });
+    // Fallback: local placeholder suggestions to avoid empty UI when offline
+    const fallback = [
+      { username: "alex_dev", fullName: "Alex Developer", avatar: null, country: "" },
+      { username: "maya_k", fullName: "Maya K.", avatar: null, country: "" },
+      { username: "sam_codes", fullName: "Sam Codes", avatar: null, country: "" },
+      { username: "lily_r", fullName: "Lily R.", avatar: null, country: "" },
+      { username: "noam_b", fullName: "Noam B.", avatar: null, country: "" },
+    ];
+    res.json(fallback);
   }
 });
 
@@ -59,7 +67,14 @@ router.get("/news", async (req, res) => {
     }));
     res.json(mapped);
   } catch (err) {
-    res.status(502).json({ error: "Failed to fetch news", details: String(err?.message || err) });
+    // Fallback: local placeholder news items
+    const now = new Date().toISOString();
+    const fallback = [
+      { id: "local-1", title: "Welcome to your feed", url: "#", author: "system", points: null, createdAt: now },
+      { id: "local-2", title: "Explore trending posts", url: "#", author: "system", points: null, createdAt: now },
+      { id: "local-3", title: "Follow people to personalize", url: "#", author: "system", points: null, createdAt: now },
+    ];
+    res.json(fallback);
   }
 });
 
