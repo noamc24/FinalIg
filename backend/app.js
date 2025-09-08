@@ -8,6 +8,7 @@ const postsRouter = require("./routes/postsRoute");
 const groupsRouter = require("./routes/groupRoute");
 const postsExtrasRouter = require("./routes/postsExtrasRoute");
 const storiesRouter = require("./routes/storiesRoute");
+const statsRouter = require("./routes/statsRoute");
 
 const app = express();
 const PORT = 3000;
@@ -36,6 +37,7 @@ app.use("/api/posts", postsRouter);
 app.use("/api/groups", groupsRouter);
 app.use("/api/post-extras", postsExtrasRouter);
 app.use("/api/stories", storiesRouter);
+app.use("/api/stats", statsRouter);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 connectDB().then(() => {
