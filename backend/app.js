@@ -7,6 +7,7 @@ const usersRouter = require("./routes/userRoute");
 const postsRouter = require("./routes/postsRoute");
 const groupsRouter = require("./routes/groupRoute");
 const postsExtrasRouter = require("./routes/postsExtrasRoute");
+const storiesRouter = require("./routes/storiesRoute");
 
 const app = express();
 const PORT = 3000;
@@ -17,12 +18,24 @@ app.use(cors({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+// הוספת כותרת CORS לקבצים סטטיים (uploads)
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+    return;
+  }
+  next();
+}, express.static(path.join(__dirname, 'uploads')));
 app.use('/frontend', express.static(path.join(__dirname, '..', 'frontend')));
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/posts", postsRouter);
 app.use("/api/groups", groupsRouter);
 app.use("/api/post-extras", postsExtrasRouter);
+app.use("/api/stories", storiesRouter);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 connectDB().then(() => {

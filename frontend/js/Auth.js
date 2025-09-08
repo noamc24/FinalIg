@@ -28,7 +28,11 @@ document.addEventListener("DOMContentLoaded", () => {
           localStorage.setItem("token", data.token);
           localStorage.setItem("loggedInUser", data.user.username);
           localStorage.setItem("profilePic", data.user.profilePic);
-
+          if (data.user.fullName) {
+            localStorage.setItem("fullName", data.user.fullName);
+          } else {
+            localStorage.removeItem("fullName");
+          }
           alert("התחברת בהצלחה!");
           window.location.href = "feed.html";
         } else {
