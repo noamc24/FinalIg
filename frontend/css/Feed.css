@@ -750,3 +750,35 @@ background-color: transparent;
   border:1px solid #e5e5e5;
   border-radius:12px;
 }
+/* --- Tech News Widget --- */
+.news-widget{
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.news-header{
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.news-list .news-item{
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+.news-list .news-item:last-child{ margin-bottom: 0; }
+.news-item a{
+  color: inherit;
+  text-decoration: none;
+}
+.news-item a:hover{ text-decoration: underline; }
+.news-item small{ color: gray; display: block; }
+
+/* Dark mode התאמה */
+.dark-mode .news-widget{
+  background-color: #1e1e1e;
+  border-color: #444;
+}
+.dark-mode .news-item small{
+  color: #aaa;
+}

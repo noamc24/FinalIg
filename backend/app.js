@@ -7,7 +7,7 @@ const usersRouter = require("./routes/userRoute");
 const postsRouter = require("./routes/postsRoute");
 const groupsRouter = require("./routes/groupRoute");
 const postsExtrasRouter = require("./routes/postsExtrasRoute");
-
+const newsRouter = require("./routes/newsRoute");
 const app = express();
 const PORT = 3000;
 
@@ -23,6 +23,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/posts", postsRouter);
 app.use("/api/groups", groupsRouter);
 app.use("/api/post-extras", postsExtrasRouter);
+app.use("/api/news", newsRouter);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 connectDB().then(() => {

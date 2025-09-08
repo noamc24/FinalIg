@@ -919,6 +919,41 @@ function sendToFriend(friendElement) {
   success.textContent = `✅ הפוסט נשלח ל-${friendName}!`;
   success.classList.remove("d-none");
 }
+// --- Web Service: טוען חדשות טכנולוגיה ומציג ב-UI ---
+async function loadTechNewsWidget(){
+  const box = document.getElementById("newsWidget");
+  if (!box) return; // אין וידג'ט בדף – לא עושים כלום
+
+  try {
+    const res = await fetch(`${API_BASE}/api/news/hackernews`);
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error("bad response");
+
+    const list = Array.isArray(data.articles) ? data.articles : [];
+    if (!list.length){
+      box.innerHTML = `<p class="text-muted m-0">אין פריטים להציג כרגע.</p>`;
+      return;
+    }
+
+    box.innerHTML = list.map(a => `
+      <div class="news-item">
+        <a href="${escAttr(a.url)}" target="_blank" rel="noopener">
+          ${escAttr(a.title)}
+        </a>
+        <small>by ${escAttr(a.by || "unknown")} • ${formatTimeAgo(a.time * 1000)}</small>
+      </div>
+    `).join("");
+  } catch (err) {
+    console.error("TechNews error:", err);
+    box.innerHTML = `<p class="text-muted m-0">לא ניתן לטעון חדשות כרגע.</p>`;
+  }
+}
+
+// הפעלה עם טעינת הדף (אפשר להדביק בתוך אחד ה-DOMContentLoaded הקיימים שלך)
+document.addEventListener("DOMContentLoaded", () => {
+  loadTechNewsWidget();
+});
+
 window.openShareModal = openShareModal;
 window.closeShareModal = closeShareModal;
 window.sendToFriend = sendToFriend;
