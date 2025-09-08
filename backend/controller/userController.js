@@ -159,4 +159,28 @@ module.exports = {
   updateUserProfile,
   deleteUser,
   getUserGroups,
- };
+  // Added: return counts for followers/following
+  getUserStats: async (req, res) => {
+    try {
+      let { username } = req.query || {};
+      username = (username || "").toString().trim();
+      if (!username) {
+        return res.status(400).json({ success: false, error: "username is required" });
+      }
+
+      const user = await User.findOne({ username });
+      if (!user) {
+        return res.status(404).json({ success: false, error: "User not found" });
+      }
+
+      return res.json({
+        success: true,
+        followers: Array.isArray(user.followers) ? user.followers.length : 0,
+        following: Array.isArray(user.following) ? user.following.length : 0,
+      });
+    } catch (err) {
+      console.error("getUserStats error:", err);
+      return res.status(500).json({ success: false, error: "Server error" });
+    }
+  }
+};
