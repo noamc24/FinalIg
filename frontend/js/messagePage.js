@@ -1,6 +1,5 @@
 document.getElementById('messagesLink').addEventListener('click', function(e) {
   e.preventDefault(); 
-
   document.body.innerHTML = ''; 
 
   // ===== כותרת הדף =====
@@ -32,6 +31,17 @@ document.getElementById('messagesLink').addEventListener('click', function(e) {
   backBtn.style.cursor = 'pointer';
   backBtn.addEventListener('click', () => window.history.back());
   sidebar.appendChild(backBtn);
+
+  // ===== Search Bar לחיפוש חברים =====
+  const searchInput = document.createElement('input');
+  searchInput.type = 'text';
+  searchInput.placeholder = 'Search friends...';
+  searchInput.style.width = '100%';
+  searchInput.style.padding = '6px';
+  searchInput.style.marginBottom = '10px';
+  searchInput.style.border = '1px solid #ccc';
+  searchInput.style.borderRadius = '6px';
+  sidebar.appendChild(searchInput);
 
   // ===== חברים =====
   const friends = [
@@ -75,6 +85,18 @@ document.getElementById('messagesLink').addEventListener('click', function(e) {
     friendDivs.push({ div: f, name: friend.name });
   });
 
+  // ===== סינון חברים לפי החיפוש =====
+  searchInput.addEventListener('input', () => {
+    const term = searchInput.value.toLowerCase();
+    friendDivs.forEach(f => {
+      if (f.name.toLowerCase().includes(term)) {
+        f.div.style.display = 'flex';
+      } else {
+        f.div.style.display = 'none';
+      }
+    });
+  });
+
   // ===== כותרת קבוצות =====
   const groupTitle = document.createElement('h3');
   groupTitle.textContent = 'Groups';
@@ -83,6 +105,8 @@ document.getElementById('messagesLink').addEventListener('click', function(e) {
 
   let groups = ['Family', 'Work', 'Friends']; 
   const groupDivs = [];
+  let groupMembers = {}; // שמירה של חברים בכל קבוצה
+
   groups.forEach(group => {
     const g = document.createElement('div');
     g.className = 'group';
@@ -92,6 +116,7 @@ document.getElementById('messagesLink').addEventListener('click', function(e) {
     g.style.fontWeight = 'bold';
     sidebar.appendChild(g);
     groupDivs.push({ div: g, name: group });
+    groupMembers[group] = [];
   });
 
   // ===== Popup ליצירת קבוצה חדשה =====
@@ -172,6 +197,7 @@ document.getElementById('messagesLink').addEventListener('click', function(e) {
 
     groups.push(name);
     groupDivs.push({ div: newGroupDiv, name });
+    groupMembers[name] = []; // יצירת מערך חברים לקבוצה החדשה
 
     newGroupDiv.addEventListener('click', () => {
       activeChat = name;
@@ -236,6 +262,114 @@ document.getElementById('messagesLink').addEventListener('click', function(e) {
   sendBtn.style.cursor = 'pointer';
   chatInputDiv.appendChild(sendBtn);
 
+  // ===== כפתור ➕ להוספת חברים לקבוצה =====
+  const plusBtn = document.createElement('button');
+  plusBtn.textContent = '+';
+  plusBtn.style.marginLeft = '10px';
+  plusBtn.style.padding = '8px 15px';
+  plusBtn.style.border = 'none';
+  plusBtn.style.backgroundColor = '#28a745';
+  plusBtn.style.color = '#fff';
+  plusBtn.style.borderRadius = '20px';
+  plusBtn.style.cursor = 'pointer';
+  chatInputDiv.appendChild(plusBtn);
+
+  // ===== Popup להוספת חברים =====
+  const addMembersPopup = document.createElement('div');
+  addMembersPopup.id = 'addMembersPopup';
+  addMembersPopup.style.position = 'fixed';
+  addMembersPopup.style.top = '0';
+  addMembersPopup.style.left = '0';
+  addMembersPopup.style.width = '100%';
+  addMembersPopup.style.height = '100%';
+  addMembersPopup.style.backgroundColor = 'rgba(0,0,0,0.5)';
+  addMembersPopup.style.display = 'none';
+  addMembersPopup.style.justifyContent = 'center';
+  addMembersPopup.style.alignItems = 'center';
+
+  const addMembersContent = document.createElement('div');
+  addMembersContent.style.background = '#fff';
+  addMembersContent.style.padding = '20px';
+  addMembersContent.style.borderRadius = '10px';
+  addMembersContent.style.width = '300px';
+  addMembersContent.style.maxHeight = '400px';
+  addMembersContent.style.overflowY = 'auto';
+  addMembersContent.style.display = 'flex';
+  addMembersContent.style.flexDirection = 'column';
+  addMembersContent.style.gap = '10px';
+
+  const addTitle = document.createElement('h3');
+  addTitle.textContent = 'Add Friends to Group';
+  addMembersContent.appendChild(addTitle);
+
+  friendDivs.forEach(f => {
+    const option = document.createElement('label');
+    option.style.display = 'flex';
+    option.style.alignItems = 'center';
+    option.style.gap = '10px';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = f.name;
+
+    const span = document.createElement('span');
+    span.textContent = f.name;
+
+    option.appendChild(checkbox);
+    option.appendChild(span);
+    addMembersContent.appendChild(option);
+  });
+
+  const saveMembersBtn = document.createElement('button');
+  saveMembersBtn.textContent = 'Save';
+  saveMembersBtn.style.background = '#0095f6';
+  saveMembersBtn.style.color = '#fff';
+  saveMembersBtn.style.padding = '8px';
+  saveMembersBtn.style.border = 'none';
+  saveMembersBtn.style.borderRadius = '6px';
+  saveMembersBtn.style.cursor = 'pointer';
+
+  const cancelAddBtn = document.createElement('button');
+  cancelAddBtn.textContent = 'Cancel';
+  cancelAddBtn.style.padding = '8px';
+  cancelAddBtn.style.borderRadius = '6px';
+  cancelAddBtn.style.border = '1px solid #ccc';
+  cancelAddBtn.style.cursor = 'pointer';
+
+  addMembersContent.appendChild(saveMembersBtn);
+  addMembersContent.appendChild(cancelAddBtn);
+
+  addMembersPopup.appendChild(addMembersContent);
+  document.body.appendChild(addMembersPopup);
+
+  plusBtn.addEventListener('click', () => {
+    if (!activeChat || !groups.includes(activeChat)) {
+      alert('Select a group first!');
+      return;
+    }
+    addMembersPopup.style.display = 'flex';
+  });
+
+  cancelAddBtn.addEventListener('click', () => {
+    addMembersPopup.style.display = 'none';
+  });
+
+  saveMembersBtn.addEventListener('click', () => {
+    const checkboxes = addMembersContent.querySelectorAll('input[type="checkbox"]:checked');
+    checkboxes.forEach(cb => {
+      const member = cb.value;
+      if(!groupMembers[activeChat].includes(member)) {
+        groupMembers[activeChat].push(member);
+
+        // הצגת הודעה באנגלית בצ'אט
+        if(!chats[activeChat]) chats[activeChat] = [];
+        chats[activeChat].push({ type: 'system', text: `${member} was added to ${activeChat} group.` });
+      }
+    });
+    addMembersPopup.style.display = 'none';
+    renderChat(activeChat);
+  });
+
   // ===== Chat Logic =====
   let activeChat = null;
   let chats = {};
@@ -246,7 +380,15 @@ document.getElementById('messagesLink').addEventListener('click', function(e) {
     chats[name].forEach(msg => {
       const msgDiv = document.createElement('div');
       msgDiv.textContent = msg.text;
-      msgDiv.className = msg.type === 'personal' ? 'message personal' : 'message friend';
+      if(msg.type === 'personal'){
+        msgDiv.className = 'message personal';
+      } else if(msg.type === 'friend'){
+        msgDiv.className = 'message friend';
+      } else {
+        msgDiv.style.fontSize = '14px';
+        msgDiv.style.color = 'green';
+        msgDiv.style.margin = '5px 0';
+      }
       chatMessages.appendChild(msgDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     });
