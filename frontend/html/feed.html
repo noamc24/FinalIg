@@ -1,3 +1,105 @@
+<style>
+      .suggestion {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        margin-bottom: 14px;
+        padding: 10px 16px;
+        transition: box-shadow 0.2s, background 0.2s;
+        position: relative;
+      }
+      .suggestion:hover {
+        background: #f7f7f7;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      }
+      .suggestion-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+        flex: 1;
+        gap: 12px;
+      }
+      .suggestion-image {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e0e0e0;
+        background: #f0f0f0;
+        margin-right: 8px;
+      }
+      .suggestion-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .suggestion-name {
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin-bottom: 2px;
+      }
+      .suggestion-subtext {
+        font-size: 0.95rem;
+        color: #888;
+      }
+      .follow-button {
+        background: #0095f6;
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 6px 18px;
+        font-weight: 500;
+        font-size: 1rem;
+        margin-left: 12px;
+        transition: background 0.2s, color 0.2s;
+        cursor: pointer;
+      }
+      .follow-button.following {
+        background: #e0e0e0;
+        color: #555;
+      }
+      .follow-button:not(.following):hover {
+        background: #1877f2;
+      }
+      @media (max-width: 600px) {
+        .suggestion-image { width: 36px; height: 36px; }
+        .suggestion { padding: 8px 8px; }
+      }
+    </style>
+    <script>
+      // Update suggested users' full names dynamically from backend
+      document.addEventListener('DOMContentLoaded', async function() {
+        const suggestions = [
+          { username: 'RonDrin7' },
+          { username: 'EladiJR' },
+          { username: 'Montekio7' },
+          { username: 'SaHaRif5' },
+          { username: 'Sultan12' },
+          { username: 'FCBJ' }
+        ];
+        for (const s of suggestions) {
+          try {
+            const res = await fetch(`/api/users/${s.username}`);
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (data && data.fullName) {
+              const el = document.querySelector(`.follow-button[data-username='${s.username}']`);
+              if (el) {
+                const info = el.closest('.suggestion').querySelector('.suggestion-subtext');
+                if (info) info.textContent = data.fullName;
+                if (data.profilePic) {
+                  const img = el.closest('.suggestion').querySelector('img.suggestion-image');
+                  if (img) img.src = data.profilePic;
+                }
+              }
+            }
+          } catch (e) {}
+        }
+      });
+    </script>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -193,6 +295,8 @@
             src="../assets/Photos/ChatGPT Image prfl2.png"
             class="rounded-circle ms-1"
             style="max-width: 30px"
+            id="profilePicMedium"
+            alt="Profile"
           />
           <a href="#" class="text-dark ms-1" style="margin-top: 70px"
             ><i class="bx bx-at fs-2"></i
@@ -252,6 +356,8 @@
             src="../assets/Photos/ChatGPT Image prfl4.png"
             class="rounded-circle ms-1"
             style="max-width: 30px"
+            id="profilePicSmall"
+            alt="Profile"
           />
         </div>
       </nav>
@@ -291,6 +397,13 @@
               id="mediaInput"
               accept="image/*,video/*"
               class="form-control mb-2"
+            />
+            <input
+              type="text"
+              id="locationInput"
+              class="form-control mb-2"
+              placeholder="הוסף מיקום (לא חובה)"
+              autocomplete="off"
             />
             <div class="text-center my-2">
               <span class="text-muted">או</span>
@@ -501,6 +614,84 @@
           <button class="switch-button" id="switchButton">Switch</button>
         </div>
 
+  <div class="suggestions-header">Suggested for you</div>
+  <div id="dynamicSuggestions"></div>
+    <script>
+      // Dynamically render suggestions from backend and set navigation
+      document.addEventListener('DOMContentLoaded', async function() {
+        const myUsername = localStorage.getItem('loggedInUser');
+        const suggestionsContainer = document.getElementById('dynamicSuggestions');
+        // Fetch suggestions from backend
+        try {
+          const res = await fetch('http://localhost:3000/api/users/suggestions');
+          const users = await res.json();
+          suggestionsContainer.innerHTML = '';
+          for (const user of users) {
+            if (!user.username || user.username === myUsername) continue;
+            const suggestion = document.createElement('div');
+            suggestion.className = 'suggestion';
+            let imgSrc = user.profilePic;
+            if (!imgSrc) {
+              imgSrc = '../assets/Photos/userp.jpg';
+            } else if (imgSrc.startsWith('/')) {
+              imgSrc = 'http://localhost:3000' + imgSrc;
+            }
+            // Check follow status
+            let isFollowing = false;
+            try {
+              const followRes = await fetch(`http://localhost:3000/api/users/is-following?follower=${myUsername}&followee=${user.username}`);
+              const followData = await followRes.json();
+              isFollowing = followRes.ok && followData.isFollowing;
+            } catch {}
+            const followLabel = isFollowing ? 'Following' : 'Follow';
+            const followClass = isFollowing ? 'follow-button following' : 'follow-button';
+            suggestion.innerHTML = `
+              <a href="/frontend/html/publicprofile.html?user=${encodeURIComponent(user.username)}" class="suggestion-link" data-username="${user.username}">
+                <img src="${imgSrc}" class="suggestion-image" onerror="this.src='../assets/Photos/userp.jpg'" />
+                <div class="suggestion-info">
+                  <span class="suggestion-name">${user.username}</span>
+                  <span class="suggestion-subtext">${user.fullName || ''}</span>
+                </div>
+              </a>
+              <button class="${followClass}" data-username="${user.username}">${followLabel}</button>
+            `;
+            suggestionsContainer.appendChild(suggestion);
+          }
+          // Activate follow buttons logic
+          const followBtns = suggestionsContainer.querySelectorAll('.follow-button');
+          followBtns.forEach(btn => {
+            btn.addEventListener('click', async function() {
+              const targetUser = btn.dataset.username;
+              const isFollowing = btn.classList.contains('following');
+              const action = isFollowing ? 'unfollow' : 'follow';
+              try {
+                const res = await fetch(`http://localhost:3000/api/users/${action}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ followerUsername: myUsername, followeeUsername: targetUser })
+                });
+                const result = await res.json();
+                if (res.ok) {
+                  if (action === 'follow') {
+                    btn.textContent = 'Following';
+                    btn.classList.add('following');
+                  } else {
+                    btn.textContent = 'Follow';
+                    btn.classList.remove('following');
+                  }
+                } else {
+                  alert(result.error || 'שגיאה בבקשת מעקב');
+                }
+              } catch (err) {
+                alert('שגיאה בשרת');
+              }
+            });
+          });
+        } catch (err) {
+          suggestionsContainer.innerHTML = '<div>שגיאה בטעינת הצעות</div>';
+        }
+      });
+    </script>
         <div class="suggestions-header">Suggested for you</div>
         <!-- Dynamic suggestions populated from backend external API -->
         <div id="suggestionsDynamicList"></div>
@@ -574,7 +765,6 @@
           </div>
           <button class="follow-button" data-username="GitHub">follow</button>
         </div>
-
         <div class="suggestions-header">Latest News</div>
         <div id="newsDynamicList"></div>
 

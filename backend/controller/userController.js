@@ -1,3 +1,23 @@
+// Suggestions: return a list of users for the frontend suggestions bar
+const getSuggestions = async (req, res) => {
+  try {
+    // You can customize this list as needed, e.g., exclude the logged-in user, limit number, etc.
+    // For now, return a fixed set of users (the ones you want to suggest)
+    const usernames = [
+      "RonDrin7",
+      "EladiJR",
+      "Montekio7",
+      "SaHaRif5",
+      "Sultan12",
+      "FCBJ"
+    ];
+    const users = await User.find({ username: { $in: usernames } }, "username fullName profilePic");
+    res.json(users);
+  } catch (err) {
+    console.error("❌ getSuggestions error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const norm = s => (s || "").toString().trim().toLowerCase();
@@ -5,15 +25,17 @@ const norm = s => (s || "").toString().trim().toLowerCase();
 
 const getUserProfile = async (req, res) => {
   try {
-let { username } = req.params;
-username = username.trim();  
-const user = await User.findOne({ username: username });
-
-
+    let { username } = req.params;
+    username = username.trim();
+  const user = await User.findOne({ username: { $regex: `^${username}$`, $options: 'i' } });
     if (!user) return res.status(404).json({ success: false, error: "User not found" });
-
-    const posts = [];
-    res.json({ success: true, user, posts });
+    // Return only the relevant fields for suggestions
+    res.json({
+      success: true,
+      fullName: user.fullName,
+      profilePic: user.profilePic,
+      username: user.username
+    });
   } catch (err) {
     console.error("❌ getUserProfile error:", err);
     res.status(500).json({ success: false, error: "Server error" });
@@ -80,23 +102,30 @@ const unfollowUser = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   try {
     const { username } = req.params;
-    const { fullName, email, password, profilePic } = req.body;
-
+    console.log('DEBUG updateUserProfile req.body:', req.body, 'type:', typeof req.body);
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ success: false, error: "User not found" });
     }
 
-    if (fullName) user.fullName = fullName;
-    if (email) user.email = email;
-
-    if (password) {
-      // הצפנה עם bcrypt
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
+    // Handle profilePic upload first
+    if (req.file) {
+      user.profilePic = `/uploads/${req.file.filename}`;
+    } else if (req.body && typeof req.body === 'object' && req.body.profilePic) {
+      user.profilePic = req.body.profilePic;
     }
 
-    if (profilePic) user.profilePic = profilePic;
+    // Only destructure if req.body is defined and is an object
+    if (req.body && typeof req.body === 'object') {
+      const { fullName, email, password } = req.body;
+      if (fullName) user.fullName = fullName;
+      if (email) user.email = email;
+      if (password) {
+        // הצפנה עם bcrypt
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+      }
+    }
 
     await user.save();
 
@@ -159,6 +188,7 @@ module.exports = {
   updateUserProfile,
   deleteUser,
   getUserGroups,
+  getSuggestions,
   // Added: return counts for followers/following
   getUserStats: async (req, res) => {
     try {

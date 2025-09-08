@@ -203,14 +203,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   avatarInput.addEventListener("change", (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result;
-      localStorage.setItem("profilePic", dataUrl);
-      profileAvatar.src = dataUrl;
-      // אפשר לעדכן עוד תמונות ע"י class משותף אם תרצה
-    };
-    reader.readAsDataURL(file);
+    const username = localStorage.getItem("username");
+    const formData = new FormData();
+    formData.append("profilePic", file);
+
+    fetch(`${API_BASE}/api/users/update/${username}`, {
+      method: "PUT",
+      body: formData
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to upload profile picture");
+        const data = await res.json();
+        if (data.user && data.user.profilePic) {
+          localStorage.setItem("profilePic", data.user.profilePic);
+          profileAvatar.src = resolveProfilePic(data.user.profilePic);
+        }
+      })
+      .catch((err) => {
+        alert("שגיאה בהעלאת תמונת פרופיל");
+        console.error(err);
+      });
   });
 
   // עריכת ביוגרפיה (שמירה ב-localStorage)
@@ -230,4 +242,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.removeItem("loggedInUser");
     window.location.assign("login.html");
   });
+
+  // החלפת משתמש (switch)
+  const switchBtn = document.getElementById("switchBtn");
+  if (switchBtn) {
+    switchBtn.addEventListener("click", () => {
+      // אפשר למחוק גם פרטים נוספים אם צריך
+      localStorage.clear();
+      window.location.assign("login.html");
+    });
+  }
 });

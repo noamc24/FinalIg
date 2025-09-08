@@ -1,5 +1,16 @@
 const Post = require("../models/postModel");
 const User = require("../models/userModel");
+// Get all posts by username
+async function getPostsByUser(req, res) {
+  try {
+    const { username } = req.params;
+    const posts = await Post.find({ username }).sort({ createdAt: -1 });
+    // Always return success, even if posts is empty
+    res.json({ success: true, posts });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+}
 
 const postsController = {
   getFeed: async (req, res) => {
@@ -103,6 +114,7 @@ updatePost: async (req, res) => {
     } catch (err) {
       res.status(500).json({ error: "Server error", details: err.message });
     }
-  }
+  },
+  getPostsByUser
 };
 module.exports = postsController;

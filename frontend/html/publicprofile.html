@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile</title>
+  <link rel="stylesheet" href="../css/publicProfile.css" />
+  <link rel="stylesheet" href="../css/index.css" />
+  <style>
+    .follow-button {
+      background: #0095f6;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-weight: 500;
+      font-size: 1rem;
+      margin-left: 12px;
+      transition: background 0.2s, color 0.2s;
+      cursor: pointer;
+    }
+    .follow-button.following {
+      background: #e0e0e0;
+      color: #555;
+    }
+    .follow-button:not(.following):hover {
+      background: #1877f2;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-public-container">
+    <div class="profile-header">
+      <img id="publicProfilePic" class="profile-avatar" src="../assets/Photos/userp.jpg" alt="Profile Picture" />
+      <div class="profile-info">
+        <h2 id="publicProfileUsername">username</h2>
+        <div id="publicProfileFullName" class="profile-fullname">Full Name</div>
+  <button id="followBtn" class="follow-button">Follow</button>
+      </div>
+    </div>
+    <div class="profile-stats">
+      <span id="publicProfilePosts">0</span> Posts
+      <span id="publicProfileFollowers">0</span> Followers
+      <span id="publicProfileFollowing">0</span> Following
+    </div>
+    <div class="profile-gallery" id="publicProfileGallery">
+      <!-- User's posts will be loaded here -->
+    </div>
+  </div>
+  <script src="../js/publicprofile.js"></script>
+</body>
+</html>

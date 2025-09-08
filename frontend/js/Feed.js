@@ -1,3 +1,13 @@
+// Switch user button logic (above suggestions)
+document.addEventListener('DOMContentLoaded', function() {
+  const switchBtn = document.getElementById('switchButton');
+  if (switchBtn) {
+    switchBtn.addEventListener('click', function() {
+      localStorage.clear();
+      window.location.assign('login.html');
+    });
+  }
+});
 /* ===========================
    Feed.js — fixed & polished
 =========================== */
@@ -227,12 +237,14 @@ window.openStoryFromBar = openStoryFromBar;
 document.addEventListener("DOMContentLoaded", () => {
   const suggestionImage = document.getElementById("suggestionImage");
   const profilePicSideBar = document.getElementById("profilePicSideBar");
+  const profilePicMedium = document.getElementById("profilePicMedium");
+  const profilePicSmall = document.getElementById("profilePicSmall");
 
   const stored = localStorage.getItem("profilePic");
   const validStored = stored && stored.trim() && stored !== "null" && stored !== "undefined";
   const finalSrc = validStored ? resolveProfilePic(stored) : DEFAULT_PROFILE;
 
-  [suggestionImage, profilePicSideBar].forEach((img) => {
+  [suggestionImage, profilePicSideBar, profilePicMedium, profilePicSmall].forEach((img) => {
     if (!img) return;
     img.src = finalSrc;
     img.onerror = () => { img.src = DEFAULT_PROFILE; };
@@ -871,12 +883,16 @@ function activateFollowButtons() {
         const result = await res.json();
         if (res.ok) {
           button.textContent = action === "follow" ? "Following" : "Follow";
+          // Refresh the feed after follow/unfollow
+          const feedRes = await fetch(`${API_BASE}/api/posts/feed/${currentUser}`);
+          const posts = await feedRes.json();
+          await renderFeed(posts);
         } else {
           alert(result.error || "שגיאה בבקשת מעקב");
         }
       } catch (err) {
         console.error("שגיאה בבקשת Follow/Unfollow:", err);
-        alert("שגיאה בשרת");
+        // alert("שגיאה בשרת");
       }
     });
   });
@@ -1432,3 +1448,30 @@ function deleteCurrentStory() {
     document.getElementById('storyPrev')?.addEventListener('click', prevStory);
   });
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Google Places Autocomplete for post location
+  const locationInput = document.getElementById("locationInput");
+  if (locationInput && window.google && window.google.maps) {
+    const autocomplete = new google.maps.places.Autocomplete(locationInput, { types: ["geocode"] });
+    autocomplete.addListener("place_changed", function () {
+      const place = autocomplete.getPlace();
+      if (place && place.geometry && place.geometry.location) {
+        window._lastLocationData = {
+          address: place.formatted_address || locationInput.value,
+          placeId: place.place_id,
+          geo: {
+            type: "Point",
+            coordinates: [
+              place.geometry.location.lng(),
+              place.geometry.location.lat()
+            ]
+          },
+          source: "google"
+        };
+      } else {
+        window._lastLocationData = null;
+      }
+    });
+  }
+});
