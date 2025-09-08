@@ -786,7 +786,7 @@ function initDrawCanvas() {
 }
 document.addEventListener("DOMContentLoaded", initDrawCanvas);
 
-/* ---------- שיתוף ---------- */
+/* ---------- שתוף ---------- */
 let sharedPost = null;
 function openShareModal() {
   const modal = document.getElementById("share-modal");

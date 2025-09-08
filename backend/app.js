@@ -10,7 +10,6 @@ const postsExtrasRouter = require("./routes/postsExtrasRoute");
 const newsRouter = require("./routes/newsRoute");
 const app = express();
 const PORT = 3000;
-
 app.use(cors({
   origin: "*"
 }));

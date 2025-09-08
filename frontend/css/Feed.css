@@ -742,7 +742,7 @@ background-color: transparent;
 }
 
 .square-canvas{
-  width: clamp(240px, 60vmin, 520px); /* ריבוע גמיש ונעים */
+  width: clamp(240px, 60vmin, 520px); /* ריבוע גמיש נעים */
   aspect-ratio: 1 / 1;               /* מבטיח ריבוע */
   display:block;
   margin: 0 auto;

@@ -38,7 +38,7 @@ router.get("/hackernews", async (req, res) => {
         by,
         url,
         score,
-        time, // Unix seconds
+        time, // Unix  seconds
       }));
 
     res.json({ success: true, articles });
