@@ -83,10 +83,10 @@
             <p class="ms-3 fs-5 mb-0 fw-bold">Reels</p>
           </div>
           <div class="d-flex align-items-center">
-            <a href="#" id="messagesLink" class="text-dark ms-1">
+            <a href="#" id="messagesLink" class="text-dark ms-1 d-flex align-items-center" style="text-decoration: none;">
               <i class="bx bx-message-rounded fs-2"></i>
+              <span class="ms-3 fs-5 mb-0 fw-bold">Messages</span>
             </a>
-            <p class="ms-3 fs-5 mb-0 fw-bold">Messages</p>
           </div>
 
           <div class="d-flex">
@@ -98,13 +98,14 @@
           <div class="d-flex">
             <a
               href="#"
-              class="text-dark ms-1"
+              class="text-dark ms-1 d-flex align-items-center"
               data-bs-toggle="modal"
               data-bs-target="#postModal"
+              style="text-decoration: none;"
             >
               <i class="bx bx-plus-circle fs-2"></i>
+              <span class="ms-3 fs-5 mb-0 fw-bold">Create</span>
             </a>
-            <p class="ms-3 fs-5 mb-0 fw-bold">Create</p>
           </div>
 
           <div class="d-flex" style="cursor: pointer" onclick="goToMyProfile()">
@@ -340,7 +341,10 @@
           <div
             class="comments-header d-flex justify-content-between align-items-center"
           >
-            <h5 class="m-0">comments</h5>
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-outline-secondary btn-sm" onclick="closeCommentsSidebar()">&larr; Back</button>
+              <h5 class="m-0">comments</h5>
+            </div>
             <button class="btn-close" onclick="closeCommentsSidebar()"></button>
           </div>
           <div class="comments-body">
