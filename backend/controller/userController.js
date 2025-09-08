@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
+const norm = s => (s || "").toString().trim().toLowerCase();
 
 
 const getUserProfile = async (req, res) => {

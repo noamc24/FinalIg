@@ -34,9 +34,35 @@ updatePost: async (req, res) => {
 
   createPost: async (req, res) => {
     try {
-      const { username, caption, mediaType, profilePic } = req.body;
+      console.log('POST /api/posts req.body:', req.body);
+      console.log('POST /api/posts req.file:', req.file);
+      let { username, caption, mediaType, profilePic, location } = req.body;
       const user = await User.findOne({ username });
       if (!user) return res.status(404).json({ error: "User not found" });
+      // נקה location אם geo לא תקין או חסר
+      let parsedLocation = undefined;
+      if (location) {
+        try {
+          parsedLocation = typeof location === 'string' ? JSON.parse(location) : location;
+          // If geo exists, it must be a valid GeoJSON Point with coordinates array
+          if (
+            !parsedLocation.geo ||
+            typeof parsedLocation.geo !== 'object' ||
+            parsedLocation.geo.type !== 'Point' ||
+            !Array.isArray(parsedLocation.geo.coordinates) ||
+            parsedLocation.geo.coordinates.length !== 2 ||
+            isNaN(parsedLocation.geo.coordinates[0]) ||
+            isNaN(parsedLocation.geo.coordinates[1])
+          ) {
+            parsedLocation = undefined;
+          }
+        } catch {
+          parsedLocation = undefined;
+        }
+      } else {
+        parsedLocation = undefined;
+      }
+      console.log('parsedLocation before save:', parsedLocation);
       const newPost = new Post({
         userId: user._id,
         username: user.username,
@@ -44,24 +70,22 @@ updatePost: async (req, res) => {
         caption,
         mediaUrl: req.file ? `/uploads/${req.file.filename}` : null,
         mediaType,
+        ...(parsedLocation ? { location: parsedLocation } : {})
       });
-
       await newPost.save();
       res.status(201).json({
         success: true,
-        post: newPost   // 👈 מחזירים את הפוסט המלא
+        post: newPost
       });
-
     } catch (err) {
-      res.status(500).json({ error: "Server error", details: err.message });
+      console.error('Error in createPost:', err);
+      res.status(500).json({ error: err.message || 'שגיאה ביצירת פוסט', details: err });
     }
-  }
-  ,
-
+  },
 
   deletePost: async (req, res) => {
     try {
-      const { id, username } = req.params;  // 👈 מתוך ה־URL
+      const { id, username } = req.params;
 
       const user = await User.findOne({ username });
       if (!user) return res.status(404).json({ error: "User not found" });
@@ -79,7 +103,6 @@ updatePost: async (req, res) => {
     } catch (err) {
       res.status(500).json({ error: "Server error", details: err.message });
     }
-  },
-}
-
-module.exports = { postsController };
+  }
+};
+module.exports = postsController;
