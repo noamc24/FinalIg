@@ -10,6 +10,54 @@ async function findGroup(identifier) {
 }
 
 const groupController = {
+  // Create a group that auto-includes all users the creator follows
+  createGroupFromFollowing: async (req, res) => {
+    try {
+      const { username, name, description = "", includeSelf = true, isPublic = false } = req.body || {};
+
+      if (!username || !name) {
+        return res.status(400).json({ success: false, error: "username and name are required" });
+      }
+
+      const user = await User.findOne({ username });
+      if (!user) return res.status(404).json({ success: false, error: "User not found" });
+
+      const existing = await Group.findOne({ name });
+      if (existing) return res.status(400).json({ success: false, error: "Group name already taken" });
+
+      const followingUsernames = Array.isArray(user.following) ? user.following : [];
+      const followingUsers = await User.find({ username: { $in: followingUsernames } }, { _id: 1 });
+      const followingIds = followingUsers.map(u => u._id);
+
+      const membersSet = new Set(followingIds.map(id => id.toString()));
+      if (includeSelf) membersSet.add(user._id.toString());
+
+      const members = Array.from(membersSet).map(id => id);
+
+      const group = new Group({
+        name,
+        description,
+        isPublic: Boolean(isPublic),
+        owner: user._id,
+        admins: [user._id],
+        members
+      });
+
+      await group.save();
+
+      // also attach group to owner profile groups array if not present
+      if (!Array.isArray(user.groups)) user.groups = [];
+      if (!user.groups.find(gid => gid.toString() === group._id.toString())) {
+        user.groups.push(group._id);
+        await user.save();
+      }
+
+      return res.status(201).json({ success: true, message: "Group created from following", group });
+    } catch (err) {
+      return res.status(500).json({ success: false, error: "Server error", details: err.message });
+    }
+  },
+
   createGroup: async (req, res) => {
     try {
       const { username, name, description } = req.body;

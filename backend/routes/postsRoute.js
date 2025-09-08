@@ -19,6 +19,7 @@ const upload = multer({
 
 router.put("/:id", postsController.updatePost);
 router.get("/feed/:username", postsController.getFeed);
+router.get("/explore", postsController.getExplore);
 router.post("/", upload.single("file"), postsController.createPost);
 router.delete("/:id/:username", postsController.deletePost);
 
