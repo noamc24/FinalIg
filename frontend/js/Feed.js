@@ -18,6 +18,7 @@ function resolveMediaUrl(u) {
   if (!u) return null;
   const s = String(u).trim();
   if (/^(https?:|data:|blob:)/i.test(s)) return s;
+  if (s.startsWith("/uploads/")) return API_BASE + s;
   if (s.startsWith("/")) return API_BASE + s;
   return s;
 }
@@ -56,12 +57,13 @@ function refreshStoriesBar() {
     myTile.className = "story-tile";
     myTile.style.cursor = "pointer";
     myTile.innerHTML = `
-      <div style="position:relative; width:64px; height:64px;">
-        <img id="myStoryAvatar" src="${getCurrentProfilePic()}" alt="you" style="width:64px;height:64px;border-radius:50%;border:2px solid #fff;object-fit:cover" />
-        <div class="add-badge" style="position:absolute;right:-2px;bottom:-2px;width:20px;height:20px;border-radius:50%;background:#0095f6;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;line-height:1;">+</div>
+      <div class="my-story-avatar-wrap" style="position:relative; width:90px; height:90px;">
+        <img id="myStoryAvatar" src="${getCurrentProfilePic()}" alt="you" class="my-story-avatar-img" />
+        <div class="add-badge" id="myStoryAddBadge">+</div>
       </div>
       <p id="myStoryLabel" style="font-size:12px;margin-top:6px;color:#333;text-align:center">Your story</p>
     `;
+  // (הוסרו אופציות תפריט מהעיגול ב-bar)
     bar.prepend(myTile);
   } else {
     const av = myTile.querySelector("#myStoryAvatar");
@@ -73,10 +75,26 @@ function refreshStoriesBar() {
   const hasMine = myFirstIndex !== -1;
 
   myTile.classList.toggle("has-story", hasMine);
-  myTile.querySelector("#myStoryLabel").textContent = hasMine ? "story" : "Your story";
+  const avatarImg = myTile.querySelector("#myStoryAvatar");
+  const addBadge = myTile.querySelector("#myStoryAddBadge");
+  if (hasMine) {
+    avatarImg.classList.add("has-story");
+    avatarImg.style.borderColor = "#f56040";
+    avatarImg.style.background = "linear-gradient(45deg, #ff8e15, #ff8019, #f25b5b, #cc2366, #bc1888)";
+    addBadge.style.display = "none";
+  } else {
+    avatarImg.classList.remove("has-story");
+    avatarImg.style.borderColor = "#ccc";
+    avatarImg.style.background = "#eee";
+    addBadge.style.display = "flex";
+    addBadge.textContent = "+";
+  }
+  myTile.querySelector("#myStoryLabel").textContent = "Your story";
   myTile.onclick = () => {
     if (hasMine && typeof window.openStoriesViewer === "function") {
-      window.openStoriesViewer(myFirstIndex, storiesData);
+      // הצג את כל הסטוריז של המשתמש (לא רק הראשון)
+      const myStories = storiesData.filter(s => s.username === me);
+      window.openStoriesViewer(0, myStories);
     } else {
       openStoryCreator();
     }
@@ -93,7 +111,9 @@ function refreshStoriesBar() {
     bar.appendChild(dyn);
   }
 
-  dyn.innerHTML = storiesData.map((st, idx) => {
+  // סינון הסטורי של המשתמש מה-bar
+  const othersStories = storiesData.filter(st => st.username !== me);
+  dyn.innerHTML = othersStories.map((st, idx) => {
     const avatar = resolveProfilePic(st.profilePic) || DEFAULT_PROFILE;
     const name = st.username || "user";
     const ring = st.viewed ? "#ccc" : "#f56040";
@@ -141,6 +161,11 @@ function saveStoriesLocal() {
 
 // ====== STORIES: Creator & Upload ======
 function openStoryCreator() {
+  // סגור צפיית סטורים אם פתוחה
+  const overlay = document.getElementById('storyOverlay');
+  if (overlay && !overlay.classList.contains('d-none')) {
+    overlay.classList.add('d-none');
+  }
   const m = new bootstrap.Modal(document.getElementById("storyModal"));
   document.getElementById("storyMediaInput").value = "";
   document.getElementById("storyCaption").value = "";
@@ -169,52 +194,29 @@ async function handleStoryUpload() {
   formData.append("profilePic", profilePic);
   formData.append("file", file);
 
-  let okViaAPI = false;
   try {
     const resp = await fetch(`${API_BASE}/api/stories`, { method: "POST", body: formData });
     if (!resp.ok) throw new Error("server error");
-    const data = await resp.json();
-    storiesData.unshift({
-      id: data.story?._id || data.story?.id || crypto.randomUUID(),
-      username,
-      profilePic,
-      mediaUrl: resolveMediaUrl(data.story?.mediaUrl),
-      mediaType: data.story?.mediaType || mediaType,
-      caption,
-      duration: data.story?.duration || 5000,
-      createdAt: data.story?.createdAt || new Date().toISOString(),
-      viewed: false
-    });
-    okViaAPI = true;
-  } catch (_) {
-    const localUrl = URL.createObjectURL(file);
-    storiesData.unshift({
-      id: crypto.randomUUID(),
-      username,
-      profilePic,
-      mediaUrl: localUrl,
-      mediaType,
-      caption,
-      duration: 5000,
-      createdAt: new Date().toISOString(),
-      viewed: false
-    });
+    // רענון מלא מהשרת אחרי העלאה
+    await loadStoriesFeed();
+  } catch (err) {
+    alert("שגיאה בהעלאת סטורי לשרת");
+    console.error(err);
   }
-
   document.getElementById("storyMediaInput").value = "";
   document.getElementById("storyCaption").value = "";
   pendingStoryBlob = null;
   document.getElementById("storyCanvasBadge")?.classList.add("d-none");
   bootstrap.Modal.getInstance(document.getElementById("storyModal"))?.hide();
-
-  if (!okViaAPI) saveStoriesLocal();
-  refreshStoriesBar();
 }
 window.handleStoryUpload = handleStoryUpload;
 
 function openStoryFromBar(index) {
+  // פותח רק את הסטוריז של אחרים (לא שלך)
+  const me = getCurrentUsername();
+  const othersStories = storiesData.filter(st => st.username !== me);
   if (typeof window.openStoriesViewer === "function") {
-    window.openStoriesViewer(index, storiesData);
+    window.openStoriesViewer(index, othersStories);
     return;
   }
   alert("Viewer לא אותר. ודא ששמו openStoriesViewer ושמקבל (index, storiesData).");
@@ -237,6 +239,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   if (!validStored) localStorage.setItem("profilePic", DEFAULT_PROFILE);
+
+  const suggestionFullName = document.getElementById("suggestionFullName");
+  const suggestionUsername = document.getElementById("suggestionUsername");
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  const loggedInFullName = localStorage.getItem("fullName") || "";
+  if (suggestionUsername && loggedInUser) {
+    suggestionUsername.textContent = loggedInUser;
+  }
+  if (suggestionFullName) {
+    suggestionFullName.textContent = loggedInFullName;
+  }
 });
 
 // ====== Auth guard ======
@@ -312,7 +325,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         const result = await res.json();
         if (res.ok) {
-          button.textContent = action === "follow" ? "unfollow" : "follow";
+          button.textContent = action === "follow" ? "Following" : "Follow";
         } else {
           alert(result.error || "שגיאה בבקשה");
         }
@@ -409,6 +422,7 @@ window.toggleLike = toggleLike;
 
 // ====== Create Post ======
 async function handlePostUpload() {
+
   const caption = document.getElementById("captionInput").value.trim();
   const fileInput = document.getElementById("mediaInput");
   const file =
@@ -420,6 +434,14 @@ async function handlePostUpload() {
   const username = localStorage.getItem("loggedInUser");
   const profilePic = localStorage.getItem("profilePic");
 
+  // דוגמה: שליפת מיקום מהאינפוט (אם תוסיף שדה כזה ב-HTML)
+  let location = null;
+  const locationInput = document.getElementById("locationInput");
+  // שלח מיקום רק אם נבחרה הצעה מגוגל (ולא ידני)
+  if (locationInput && locationInput.value && window._lastLocationData && window._lastLocationData.address === locationInput.value) {
+    location = window._lastLocationData;
+  }
+
   if (!username) return alert("משתמש לא מחובר!");
   if (!caption || !file) return alert("נא למלא את כל השדות");
 
@@ -430,6 +452,7 @@ async function handlePostUpload() {
   formData.append("mediaType", mediaType);
   formData.append("profilePic", profilePic);
   formData.append("file", file);
+  if (location) formData.append("location", JSON.stringify(location));
 
   try {
     const res = await fetch(`${API_BASE}/api/posts`, { method: "POST", body: formData });
@@ -744,7 +767,7 @@ function activateFollowButtons() {
         });
         const result = await res.json();
         if (res.ok) {
-          button.textContent = action === "follow" ? "Unfollow" : "Follow";
+          button.textContent = action === "follow" ? "Following" : "Follow";
         } else {
           alert(result.error || "שגיאה בבקשת מעקב");
         }
@@ -777,7 +800,7 @@ document.querySelectorAll(".follow-button").forEach((button) => {
 
 async function checkFollowingStatus(currentUser, targetUser) {
   try {
-    const res = await fetch(`/api/users/isFollowing?follower=${currentUser}&followee=${targetUser}`);
+    const res = await fetch(`/api/users/is-following?follower=${currentUser}&followee=${targetUser}`);
     const data = await res.json();
     return res.ok && data.isFollowing;
   } catch (err) {
@@ -803,7 +826,7 @@ function formatTimeAgo(createdAt) {
 }
 
 // ====== Render Feed ======
-function renderFeed(posts) {
+async function renderFeed(posts) {
   if (!Array.isArray(posts)) {
     console.error("Posts is not an array:", posts);
     return;
@@ -813,14 +836,15 @@ function renderFeed(posts) {
   const currentUser = localStorage.getItem("loggedInUser");
   container.innerHTML = "";
 
-  posts.forEach(async (post) => {
+  // בנה את כל הפוסטים עם סטטוס מעקב אמיתי
+  const postHtmlArr = await Promise.all(posts.map(async (post) => {
     const isNotMe = post.username !== currentUser;
     const profilePic = resolveProfilePic(post.profilePic || localStorage.getItem("profilePic"));
 
     let followButtonHTML = "";
     if (isNotMe) {
       const isFollowing = await checkFollowingStatus(currentUser, post.username);
-      const label = isFollowing ? "Unfollow" : "Follow";
+      const label = isFollowing ? "Following" : "Follow";
       followButtonHTML = `<button class="follow-button" data-username="${post.username}">${label}</button>`;
     }
 
@@ -835,12 +859,21 @@ function renderFeed(posts) {
     const likesArr = Array.isArray(post.likes) ? post.likes : [];
     const commentsArr = Array.isArray(post.comments) ? post.comments : [];
 
-    const postHTML = `
+    return `
       <div class="post" data-id="${post._id}">
         <div class="post-header d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
             <img src="${profilePic}" class="avatar" />
-            <span class="username d-flex">${post.username} <p class="ms-2 text-secondary">•${formatTimeAgo(post.createdAt)}</p></span>  
+            <span class="username d-flex align-items-center">
+              ${post.username}
+              ${(post.location && (post.location.address || post.location.placeId)) ? `
+                <span class="post-location text-secondary ms-2 d-flex align-items-center" style="font-size: 0.95em;">
+                  <i class='bx bx-map-pin' style="margin-left: 2px;"></i>
+                  <span>${escAttr(post.location.address || 'מיקום לא ידוע')}</span>
+                </span>
+              ` : ''}
+              <p class="ms-2 text-secondary mb-0">•${formatTimeAgo(post.createdAt)}</p>
+            </span>
           </div>
           ${
             isNotMe
@@ -879,8 +912,10 @@ function renderFeed(posts) {
         <div class="comments-list d-none"></div>
       </div>
     `;
-    container.innerHTML += postHTML;
-  });
+  }));
+  container.innerHTML = postHtmlArr.join("");
+  // הפעלת כפתורי follow אחרי שהפיד נטען
+  activateFollowButtons();
 }
 
 // ====== Profile nav ======
@@ -1146,18 +1181,107 @@ document.addEventListener("DOMContentLoaded", loadStoriesFeed);
     $uname().textContent = s.username;
     $uavatar().src = s.avatar;
 
+    // הצגת כפתור אופציות רק אם זה הסטורי שלי
+    const optionsBtn = document.getElementById('storyOptionsBtn');
+    const optionsMenu = document.getElementById('storyOptionsMenu');
+    if (optionsBtn && optionsMenu) {
+      if (s.username === getCurrentUsername()) {
+        optionsBtn.style.display = 'flex';
+      } else {
+        optionsBtn.style.display = 'none';
+        optionsMenu.style.display = 'none';
+      }
+      optionsBtn.onclick = (e) => {
+        e.stopPropagation();
+        optionsMenu.style.display = optionsMenu.style.display === 'block' ? 'none' : 'block';
+      };
+      document.addEventListener('click', function hideMenu(ev) {
+        if (!optionsMenu.contains(ev.target) && ev.target !== optionsBtn) {
+          optionsMenu.style.display = 'none';
+          document.removeEventListener('click', hideMenu);
+        }
+      });
+      // פעולה למחיקת סטורי
+      optionsMenu.querySelector('#storyDeleteBtn').onclick = (ev) => {
+        ev.stopPropagation();
+        optionsMenu.style.display = 'none';
+        // מחיקת הסטורי הנוכחי מהשרת ומהמערך
+        if (window.stories && typeof window.current === 'number') {
+          const currStory = window.stories[window.current];
+          if (currStory && currStory.id && currStory.username) {
+            fetch(`${API_BASE}/api/stories/${currStory.id}/${currStory.username}`, { method: 'DELETE' })
+              .then(async (res) => {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'שגיאה במחיקת סטורי');
+                alert('✅ הסטורי נמחק בהצלחה');
+                window.stories.splice(window.current, 1);
+                if (window.stories.length === 0) {
+                  document.getElementById('storyOverlay').classList.add('d-none');
+                } else {
+                  window.current = Math.max(0, window.current - 1);
+                  renderCurrent();
+                }
+              })
+              .catch(err => {
+                alert('שגיאה במחיקת סטורי');
+                console.error('שגיאה במחיקת סטורי:', err);
+              });
+          }
+        }
+      };
+// מוחק את הסטורי הנוכחי מהמערך ומרענן את הצפייה
+function deleteCurrentStory() {
+  if (!window.stories || typeof window.current !== 'number') return;
+  const s = window.stories[window.current];
+  if (!s) return;
+  // מחיקת הסטורי מהשרת (אם יש API)
+  if (s.id && typeof fetch === 'function') {
+    fetch(`/api/stories/${s.id}`, { method: 'DELETE', credentials: 'include' })
+      .then(() => {
+        window.stories.splice(window.current, 1);
+        if (window.stories.length === 0) {
+          document.getElementById('storyOverlay').classList.add('d-none');
+        } else {
+          window.current = Math.max(0, window.current - 1);
+          renderCurrent();
+        }
+      });
+  } else {
+    window.stories.splice(window.current, 1);
+    if (window.stories.length === 0) {
+      document.getElementById('storyOverlay').classList.add('d-none');
+    } else {
+      window.current = Math.max(0, window.current - 1);
+      renderCurrent();
+    }
+  }
+}
+      // פעולה להעלאת סטורי נוסף
+      optionsMenu.querySelector('#storyAddBtn').onclick = (ev) => {
+        ev.stopPropagation();
+        optionsMenu.style.display = 'none';
+        if (typeof openStoryCreator === 'function') openStoryCreator();
+      };
+    }
+
     $img().style.display = 'none';
     $video().style.display = 'none';
 
     const isVideo = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(s.src);
     const durationMs = s.duration || STORY_DURATION;
+    // נקה אירועים קודמים
+    $img().onerror = null;
+    $video().onerror = null;
 
     if (isVideo) {
       const v = $video();
       v.src = s.src;
       v.style.display = 'block';
       v.currentTime = 0;
-
+      v.onerror = () => {
+        v.style.display = 'none';
+        alert('שגיאה בטעינת וידאו לסטורי. ודא שהקובץ קיים ונתיבו תקין.');
+      };
       const start = () => {
         try { v.play().catch(()=>{}); } catch(_){}
         const d = (isFinite(v.duration) && v.duration > 0) ? v.duration * 1000 : durationMs;
@@ -1165,8 +1289,13 @@ document.addEventListener("DOMContentLoaded", loadStoriesFeed);
       };
       if (isFinite(v.duration) && v.duration > 0) start(); else v.onloadedmetadata = start;
     } else {
-      $img().src = s.src;
-      $img().style.display = 'block';
+      const img = $img();
+      img.src = s.src;
+      img.style.display = 'block';
+      img.onerror = () => {
+        img.style.display = 'none';
+        alert('שגיאה בטעינת תמונה לסטורי. ודא שהקובץ קיים ונתיבו תקין.');
+      };
       startProgress(durationMs, nextStory);
     }
 

@@ -26,6 +26,15 @@ const postSchema = new mongoose.Schema({
     enum: ["image", "video", "text"],
     required: true
   },
+  location: {
+    address: { type: String, trim: true },
+    placeId: { type: String },
+    source:  { type: String, enum: ["google","bing","manual"] },
+    geo: {
+      type: { type: String, enum: ["Point"] },
+      coordinates: { type: [Number] }
+    }
+  },
   likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],  
   comments: [                                                    
     {
@@ -41,4 +50,5 @@ const postSchema = new mongoose.Schema({
   }
 });
 
+postSchema.index({ "location.geo": "2dsphere" });
 module.exports = mongoose.models.Post || mongoose.model("Post", postSchema);

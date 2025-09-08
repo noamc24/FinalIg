@@ -8,12 +8,33 @@
     <link rel="stylesheet" href="../css/index.css" />
     <link rel="shortcut icon" href="../assets/icons/instagram-icon-tab.png" />
 
+    <style>
+      /* Make Google Maps autocomplete suggestions appear above modal */
+      .pac-container {
+        z-index: 20000 !important;
+      }
+    </style>
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
       crossorigin="anonymous"
     />
+    <!-- Google Maps Places API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXCmGqBaJAvXIY09YjCBaf0V2AUGKGbIY&libraries=places"></script>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <head>
+    <link rel="stylesheet" href="/frontend/css/messagePage.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Messages App</title>
+    <link rel="stylesheet" href="/frontend/js/messagePage.js" />
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
@@ -36,41 +57,55 @@
             class="my-3"
           />
           <div class="d-flex">
-            <a href="#" class="text-dark ms-1"><i class="bx bx-home-alt fs-2"></i></a>
+            <a href="#" class="text-dark ms-1"
+              ><i class="bx bx-home-alt fs-2"></i
+            ></a>
             <p class="ms-3 fs-5 mb-0 fw-bold">Home</p>
           </div>
           <div class="d-flex" id="searchdiv">
             <a href="#" class="text-dark ms-1" onclick="changesearch()"
               ><i class="bx bx-search fs-2"></i
             ></a>
-            <p class="ms-3 fs-5 mb-0 fw-bold" onclick="changesearch()">Search</p>
+            <p class="ms-3 fs-5 mb-0 fw-bold" onclick="changesearch()">
+              Search
+            </p>
           </div>
           <div class="d-flex">
-            <a href="#" class="text-dark ms-1"><i class="bx bx-compass fs-2"></i></a>
+            <a href="#" class="text-dark ms-1"
+              ><i class="bx bx-compass fs-2"></i
+            ></a>
             <p class="ms-3 fs-5 mb-0 fw-bold">Explore</p>
           </div>
           <div class="d-flex">
-            <a href="#" class="text-dark ms-1"><i class="bx bx-movie-play fs-2"></i></a>
+            <a href="#" class="text-dark ms-1"
+              ><i class="bx bx-movie-play fs-2"></i
+            ></a>
             <p class="ms-3 fs-5 mb-0 fw-bold">Reels</p>
           </div>
-          <div class="d-flex">
-            <a href="#" class="text-dark ms-1"><i class="bx bx-message-rounded fs-2"></i></a>
-            <p class="ms-3 fs-5 mb-0 fw-bold">Messages</p>
+          <div class="d-flex align-items-center">
+            <a href="#" id="messagesLink" class="text-dark ms-1 d-flex align-items-center" style="text-decoration: none;">
+              <i class="bx bx-message-rounded fs-2"></i>
+              <span class="ms-3 fs-5 mb-0 fw-bold">Messages</span>
+            </a>
           </div>
+
           <div class="d-flex">
-            <a href="#" class="text-dark ms-1"><i class="bx bx-heart fs-2"></i></a>
+            <a href="#" class="text-dark ms-1"
+              ><i class="bx bx-heart fs-2"></i
+            ></a>
             <p class="ms-3 fs-5 mb-0 fw-bold">Notifications</p>
           </div>
           <div class="d-flex">
             <a
               href="#"
-              class="text-dark ms-1"
+              class="text-dark ms-1 d-flex align-items-center"
               data-bs-toggle="modal"
               data-bs-target="#postModal"
+              style="text-decoration: none;"
             >
               <i class="bx bx-plus-circle fs-2"></i>
+              <span class="ms-3 fs-5 mb-0 fw-bold">Create</span>
             </a>
-            <p class="ms-3 fs-5 mb-0 fw-bold">Create</p>
           </div>
 
           <!-- Stats link (large sidebar) -->
@@ -92,7 +127,11 @@
             <p class="ms-3 fs-5 mb-0 fw-bold">Profile</p>
           </div>
 
-          <div class="toggle-mode d-flex" id="darkModeToggle" style="cursor: pointer">
+          <div
+            class="toggle-mode d-flex"
+            id="darkModeToggle"
+            style="cursor: pointer"
+          >
             <i class="bx bx-moon fs-2" id="themeIcon"></i>
             <p class="ms-3 fs-5 mb-0 fw-bold">Change Theme</p>
           </div>
@@ -102,7 +141,9 @@
             <p class="ms-3 fs-5 mb-0 fw-bold">Threads</p>
           </div>
           <div class="d-flex">
-            <a href="#" class="text-dark ms-1"><i class="bx bx-menu fs-2"></i></a>
+            <a href="#" class="text-dark ms-1"
+              ><i class="bx bx-menu fs-2"></i
+            ></a>
             <p class="ms-3 fs-5 mb-0 fw-bold">More</p>
           </div>
         </div>
@@ -123,14 +164,24 @@
             style="max-width: 37px"
             class="my-3"
           />
-          <a href="#" class="text-dark ms-1"><i class="bx bx-home-alt fs-2"></i></a>
+          <a href="#" class="text-dark ms-1"
+            ><i class="bx bx-home-alt fs-2"></i
+          ></a>
           <a href="#" class="text-dark ms-1" id="medium-search"
             ><i class="bx bx-search fs-2"></i
           ></a>
-          <a href="#" class="text-dark ms-1"><i class="bx bx-compass fs-2"></i> </a>
-          <a href="#" class="text-dark ms-1"><i class="bx bx-movie-play fs-2"></i></a>
-          <a href="#" class="text-dark ms-1"><i class="bx bx-message-rounded fs-2"></i></a>
-          <a href="#" class="text-dark ms-1"><i class="bx bx-heart fs-2"></i> </a>
+          <a href="#" class="text-dark ms-1"
+            ><i class="bx bx-compass fs-2"></i>
+          </a>
+          <a href="#" class="text-dark ms-1"
+            ><i class="bx bx-movie-play fs-2"></i
+          ></a>
+          <a href="#" class="text-dark ms-1"
+            ><i class="bx bx-message-rounded fs-2"></i
+          ></a>
+          <a href="#" class="text-dark ms-1"
+            ><i class="bx bx-heart fs-2"></i>
+          </a>
           <a
             href="#"
             class="text-dark ms-1"
@@ -138,7 +189,11 @@
             data-bs-target="#postModal"
             ><i class="bx bx-plus-circle fs-2"></i
           ></a>
-          <img src="../assets/Photos/ChatGPT Image prfl2.png" class="rounded-circle ms-1" style="max-width: 30px" />
+          <img
+            src="../assets/Photos/ChatGPT Image prfl2.png"
+            class="rounded-circle ms-1"
+            style="max-width: 30px"
+          />
           <a href="#" class="text-dark ms-1" style="margin-top: 70px"
             ><i class="bx bx-at fs-2"></i
           ></a>
@@ -148,12 +203,18 @@
     </div>
 
     <!-- top controls (md+) -->
-    <div class="d-flex align-items-center justify-content-end gap-3 px-3 mt-2" style="width: 60%">
+    <div
+      class="d-flex align-items-center justify-content-end gap-3 px-3 mt-2"
+      style="width: 60%"
+    >
       <div class="toggle-mode" style="cursor: pointer">
         <i class="bx bx-moon fs-2" id="themeIcon"></i>
       </div>
 
-      <div class="d-xl-none search-bar d-flex align-items-center" style="max-width: 244px; height: 35px">
+      <div
+        class="d-xl-none search-bar d-flex align-items-center"
+        style="max-width: 244px; height: 35px"
+      >
         <input
           type="search"
           id="searchInput"
@@ -168,14 +229,30 @@
     <div class="d-flex">
       <nav class="d-block d-lg-none bg-white border-top p-2 fixed-bottom py-2">
         <div class="d-flex flex-row gap-3 justify-content-around flex-wrap">
-          <a href="#" class="text-dark ms-1"><i class="bx bx-home-alt fs-2"></i></a>
-          <a href="#" class="text-dark ms-1"><i class="bx bx-compass fs-2"></i> </a>
-          <a href="#" class="text-dark ms-1"><i class="bx bx-movie-play fs-2"></i> </a>
-          <a href="#" class="text-dark ms-1" data-bs-toggle="modal" data-bs-target="#postModal"
+          <a href="#" class="text-dark ms-1"
+            ><i class="bx bx-home-alt fs-2"></i
+          ></a>
+          <a href="#" class="text-dark ms-1"
+            ><i class="bx bx-compass fs-2"></i>
+          </a>
+          <a href="#" class="text-dark ms-1"
+            ><i class="bx bx-movie-play fs-2"></i>
+          </a>
+          <a
+            href="#"
+            class="text-dark ms-1"
+            data-bs-toggle="modal"
+            data-bs-target="#postModal"
             ><i class="bx bx-plus-circle fs-2"></i
           ></a>
-          <a href="#" class="text-dark ms-1"><i class="bx bx-message-rounded fs-2"></i></a>
-          <img src="../assets/Photos/ChatGPT Image prfl4.png" class="rounded-circle ms-1" style="max-width: 30px" />
+          <a href="#" class="text-dark ms-1"
+            ><i class="bx bx-message-rounded fs-2"></i
+          ></a>
+          <img
+            src="../assets/Photos/ChatGPT Image prfl4.png"
+            class="rounded-circle ms-1"
+            style="max-width: 30px"
+          />
         </div>
       </nav>
     </div>
@@ -183,26 +260,60 @@
     <div class="main-content" style="margin-left: 344px"></div>
 
     <!-- post upload modal -->
-    <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="postModal"
+      tabindex="-1"
+      aria-labelledby="postModalLabel"
+      aria-hidden="true"
+    >
       <div class="modal-dialog">
         <div class="modal-content bg-white text-dark">
           <div class="modal-header">
             <h5 class="modal-title" id="postModalLabel">Create New Post</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="close"
+            ></button>
           </div>
           <div class="modal-body">
-            <input type="text" id="captionInput" class="form-control mb-2" placeholder="Add Caption..." />
-            <input type="file" id="mediaInput" accept="image/*,video/*" class="form-control mb-2" />
 
-            <div class="text-center my-2"><span class="text-muted">או</span></div>
+            <input
+              type="text"
+              id="captionInput"
+              class="form-control mb-2"
+              placeholder="Add Caption..."
+            />
+            <input
+              type="file"
+              id="mediaInput"
+              accept="image/*,video/*"
+              class="form-control mb-2"
+            />
+            <div class="text-center my-2">
+              <span class="text-muted">או</span>
+            </div>
 
-            <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#drawModal">
+            <button
+              class="btn btn-outline-secondary w-100"
+              data-bs-toggle="modal"
+              data-bs-target="#drawModal"
+            >
               🎨 צייר קנבס
             </button>
 
-            <span id="canvasAttachedBadge" class="badge bg-success mt-2 d-none">🖌️ תמונת קנבס מצורפת</span>
+            <span id="canvasAttachedBadge" class="badge bg-success mt-2 d-none"
+              >🖌️ תמונת קנבס מצורפת</span
+            >
 
-            <button class="btn btn-primary w-100 mt-2" onclick="handlePostUpload()">Share Post</button>
+            <button
+              class="btn btn-primary w-100 mt-2"
+              onclick="handlePostUpload()"
+            >
+              Share Post
+            </button>
           </div>
         </div>
       </div>
@@ -212,7 +323,19 @@
     <button
       id="scrollToTopBtn"
       class="btn btn-primary rounded-circle"
-      style="position: fixed; bottom: 70px; right: 20px; display: none; z-index: 1000; width: 50px; height: 50px; font-size: 22px; padding: 0; text-align: center; line-height: 50px;"
+      style="
+        position: fixed;
+        bottom: 70px;
+        right: 20px;
+        display: none;
+        z-index: 1000;
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+        padding: 0;
+        text-align: center;
+        line-height: 50px;
+      "
     >
       ↑
     </button>
@@ -223,19 +346,38 @@
         <div class="post-preview" id="post-preview"></div>
 
         <div class="comments-content">
-          <div class="comments-header d-flex justify-content-between align-items-center">
-            <h5 class="m-0">comments</h5>
+          <div
+            class="comments-header d-flex justify-content-between align-items-center"
+          >
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-outline-secondary btn-sm" onclick="closeCommentsSidebar()">&larr; Back</button>
+              <h5 class="m-0">comments</h5>
+            </div>
             <button class="btn-close" onclick="closeCommentsSidebar()"></button>
           </div>
           <div class="comments-body">
             <div id="comments-list"></div>
           </div>
           <div class="comments-footer">
-            <textarea id="comment-text" class="form-control" placeholder="add comment"></textarea>
-            <div id="typing-indicator" style="display: none; font-size: 14px; color: gray; margin-bottom: 8px">
+            <textarea
+              id="comment-text"
+              class="form-control"
+              placeholder="add comment"
+            ></textarea>
+            <div
+              id="typing-indicator"
+              style="
+                display: none;
+                font-size: 14px;
+                color: gray;
+                margin-bottom: 8px;
+              "
+            >
               🟢 You are typing...
             </div>
-            <button class="btn btn-light" onclick="submitSidebarComment(this)">post</button>
+            <button class="btn btn-light" onclick="submitSidebarComment(this)">
+              post
+            </button>
           </div>
         </div>
       </div>
@@ -282,18 +424,42 @@
       class="btn btn-secondary"
       data-bs-toggle="modal"
       data-bs-target="#filterModal"
-      style="position: fixed; bottom: 150px; right: 20px; border-radius: 50%; width: 50px; height: 50px; padding: 0; font-size: 20px; text-align: center; line-height: 45px;"
+      style="
+        position: fixed;
+        bottom: 150px;
+        right: 20px;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        font-size: 20px;
+        text-align: center;
+        line-height: 45px;
+      "
     >
       <i class="bx bx-filter"></i>
     </button>
 
     <!-- filter modal -->
-    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="filterModal"
+      tabindex="-1"
+      aria-labelledby="filterModalLabel"
+      aria-hidden="true"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
           <div class="modal-header">
-            <h5 class="modal-title" id="filterModalLabel">בחר אילו פוסטים להציג</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="סגור"></button>
+            <h5 class="modal-title" id="filterModalLabel">
+              בחר אילו פוסטים להציג
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="סגור"
+            ></button>
           </div>
           <div class="modal-body">
             <select id="postFilterSelect" class="form-select">
@@ -303,7 +469,12 @@
             </select>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="applyPostFilter()">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              onclick="applyPostFilter()"
+            >
               סנן
             </button>
           </div>
@@ -315,14 +486,16 @@
     <div id="newPostAlert" class="new-post-alert d-none">New Post!</div>
 
     <!-- main + suggestions -->
-    <div class="container custom-container d-flex justify-content-center align-items-start gap-5 mt-4">
+    <div
+      class="container custom-container d-flex justify-content-center align-items-start gap-5 mt-4"
+    >
       <main class="feed" id="feedContainer"></main>
 
       <aside class="followersSuggestions d-none d-xxl-block">
         <div class="suggestion" id="loggedInUserSuggestion">
           <img src="" class="suggestion-image" id="suggestionImage" />
           <div class="suggestion-info">
-            <span class="suggestion-name" id="suggestionUsername"></span>
+            <span class="suggestion-name fw-bold" id="suggestionUsername"></span>
             <span class="suggestion-subtext" id="suggestionFullName"></span>
           </div>
           <button class="switch-button" id="switchButton">Switch</button>
@@ -331,16 +504,24 @@
         <div class="suggestions-header">Suggested for you</div>
 
         <div class="suggestion">
-          <img src="../assets/Photos/EpicGames Logo.png" class="suggestion-image" />
+          <img
+            src="../assets/Photos/EpicGames Logo.png"
+            class="suggestion-image"
+          />
           <div class="suggestion-info">
             <span class="suggestion-name">Epic Games</span>
             <span class="suggestion-subtext">Follows you</span>
           </div>
-          <button class="follow-button" data-username="Epic Games">follow</button>
+          <button class="follow-button" data-username="Epic Games">
+            follow
+          </button>
         </div>
 
         <div class="suggestion">
-          <img src="../assets/Photos/EA Sports Logo.png" class="suggestion-image" />
+          <img
+            src="../assets/Photos/EA Sports Logo.png"
+            class="suggestion-image"
+          />
           <div class="suggestion-info">
             <span class="suggestion-name">EA Games</span>
             <span class="suggestion-subtext">Follows you</span>
@@ -349,25 +530,42 @@
         </div>
 
         <div class="suggestion">
-          <img src="../assets/Photos/PlayStation Logo.png" class="suggestion-image" />
+          <img
+            src="../assets/Photos/PlayStation Logo.png"
+            class="suggestion-image"
+          />
           <div class="suggestion-info">
             <span class="suggestion-name">PlayStation</span>
-            <span class="suggestion-subtext">you both follow: MosheParelshtain99</span>
+            <span class="suggestion-subtext"
+              >you both follow: MosheParelshtain99</span
+            >
           </div>
-          <button class="follow-button" data-username="PlayStation">follow</button>
+          <button class="follow-button" data-username="PlayStation">
+            follow
+          </button>
         </div>
 
         <div class="suggestion">
-          <img src="../assets/Photos/ChatGPT Image prfl7.png" class="suggestion-image" />
+          <img
+            src="../assets/Photos/ChatGPT Image prfl7.png"
+            class="suggestion-image"
+          />
           <div class="suggestion-info">
             <span class="suggestion-name">Haim Shafir</span>
-            <span class="suggestion-subtext">you both follow: Dr.KingPaul1010</span>
+            <span class="suggestion-subtext"
+              >you both follow: Dr.KingPaul1010</span
+            >
           </div>
-          <button class="follow-button" data-username="Haim Shafir">follow</button>
+          <button class="follow-button" data-username="Haim Shafir">
+            follow
+          </button>
         </div>
 
         <div class="suggestion">
-          <img src="../assets/Photos/GitHub Logo.png" class="suggestion-image" />
+          <img
+            src="../assets/Photos/GitHub Logo.png"
+            class="suggestion-image"
+          />
           <div class="suggestion-info">
             <span class="suggestion-name">GitHub</span>
             <span class="suggestion-subtext">New to Instagram</span>
@@ -377,10 +575,11 @@
 
         <div class="Help-Links">
           <p>
-            <a href="#">About</a> • <a href="#">Help</a> • <a href="#">Press</a> •
-            <a href="#">API</a> • <a href="#">Jobs</a> • <a href="#">Privacy</a> •
-            <a href="#">Terms</a> • <a href="#">Locations</a> •
-            <a href="#">Language</a> • <a href="#">Meta Verified</a>
+            <a href="#">About</a> • <a href="#">Help</a> •
+            <a href="#">Press</a> • <a href="#">API</a> • <a href="#">Jobs</a> •
+            <a href="#">Privacy</a> • <a href="#">Terms</a> •
+            <a href="#">Locations</a> • <a href="#">Language</a> •
+            <a href="#">Meta Verified</a>
           </p>
           <p>© 2025 Instagram from Meta</p>
         </div>
@@ -396,39 +595,82 @@
         </div>
 
         <div class="modal-body">
-          <input type="text" id="share-search" placeholder="חפש חבר..." class="form-control mb-2" />
+          <input
+            type="text"
+            id="share-search"
+            placeholder="חפש חבר..."
+            class="form-control mb-2"
+          />
 
           <ul id="friend-list">
             <li onclick="sendToFriend(this)">
-              <div class="profile-pic" style="background-image: url('../assets/Photos/ChatGPT Image prfl5.png')"></div>
+              <div
+                class="profile-pic"
+                style="
+                  background-image: url('../assets/Photos/ChatGPT Image prfl5.png');
+                "
+              ></div>
               <span class="username">Dr.KingPaul1010</span>
             </li>
             <li onclick="sendToFriend(this)">
-              <div class="profile-pic" style="background-image: url('../assets/Photos/Elad.png')"></div>
+              <div
+                class="profile-pic"
+                style="background-image: url('../assets/Photos/Elad.png')"
+              ></div>
               <span class="username">Elad_Atia10</span>
             </li>
             <li onclick="sendToFriend(this)">
-              <div class="profile-pic" style="background-image: url('../assets/Photos/ChatGPT Image prfl1.png')"></div>
+              <div
+                class="profile-pic"
+                style="
+                  background-image: url('../assets/Photos/ChatGPT Image prfl1.png');
+                "
+              ></div>
               <span class="username">noam11010</span>
             </li>
             <li onclick="sendToFriend(this)">
-              <div class="profile-pic" style="background-image: url('../assets/Photos/ChatGPT Image prfl2.png')"></div>
+              <div
+                class="profile-pic"
+                style="
+                  background-image: url('../assets/Photos/ChatGPT Image prfl2.png');
+                "
+              ></div>
               <span class="username">Sultan29</span>
             </li>
             <li onclick="sendToFriend(this)">
-              <div class="profile-pic" style="background-image: url('../assets/Photos/ChatGPT Image prfl8.png')"></div>
+              <div
+                class="profile-pic"
+                style="
+                  background-image: url('../assets/Photos/ChatGPT Image prfl8.png');
+                "
+              ></div>
               <span class="username">itzik123213</span>
             </li>
             <li onclick="sendToFriend(this)">
-              <div class="profile-pic" style="background-image: url('../assets/Photos/ChatGPT Image prfl6.png')"></div>
+              <div
+                class="profile-pic"
+                style="
+                  background-image: url('../assets/Photos/ChatGPT Image prfl6.png');
+                "
+              ></div>
               <span class="username">MosheParelshtain99</span>
             </li>
             <li onclick="sendToFriend(this)">
-              <div class="profile-pic" style="background-image: url('../assets/Photos/ChatGPT Image prfl9.png')"></div>
+              <div
+                class="profile-pic"
+                style="
+                  background-image: url('../assets/Photos/ChatGPT Image prfl9.png');
+                "
+              ></div>
               <span class="username">Montekyo227</span>
             </li>
             <li onclick="sendToFriend(this)">
-              <div class="profile-pic" style="background-image: url('../assets/Photos/ChatGPT Image prfl7.png')"></div>
+              <div
+                class="profile-pic"
+                style="
+                  background-image: url('../assets/Photos/ChatGPT Image prfl7.png');
+                "
+              ></div>
               <span class="username">SahlomBenTsion7985</span>
             </li>
           </ul>
@@ -457,7 +699,12 @@
               <span>Email</span>
             </div>
             <div class="share-option" onclick="shareTo('threads')">
-              <svg width="30px" height="30px" viewBox="0 0 192 192" fill="currentColor">
+              <svg
+                width="30px"
+                height="30px"
+                viewBox="0 0 192 192"
+                fill="currentColor"
+              >
                 <path
                   d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.881 72.2328C81.6116 63.5383 90.6052 61.6848 97.2286 61.6848C97.3051 61.6848 97.3819 61.6848 97.4576 61.6855C105.707 61.7381 111.932 64.1366 115.961 68.814C118.893 72.2193 120.854 76.925 121.825 82.8638C114.511 81.6207 106.601 81.2385 98.145 81.7233C74.3247 83.0954 59.0111 96.9879 60.0396 116.292C60.5615 126.084 65.4397 134.508 73.775 140.011C80.8224 144.663 89.899 146.938 99.3323 146.423C111.79 145.74 121.563 140.987 128.381 132.296C133.559 125.696 136.834 117.143 138.28 106.366C144.217 109.949 148.617 114.664 151.047 120.332C155.179 129.967 155.42 145.8 142.501 158.708C131.182 170.016 117.576 174.908 97.0135 175.059C74.2042 174.89 56.9538 167.575 45.7381 153.317C35.2355 139.966 29.8077 120.682 29.6052 96C29.8077 71.3178 35.2355 52.0336 45.7381 38.6827C56.9538 24.4249 74.2039 17.11 97.0132 16.9405C119.988 17.1113 137.539 24.4614 149.184 38.788C154.894 45.8136 159.199 54.6488 162.037 64.9503L178.184 60.6422C174.744 47.9622 169.331 37.0357 161.965 27.974C147.036 9.60668 125.202 0.195148 97.0695 0H96.9569C68.8816 0.19447 47.2921 9.6418 32.7883 28.0793C19.8819 44.4864 13.2244 67.3157 13.0007 95.9325L13 96L13.0007 96.0675C13.2244 124.684 19.8819 147.514 32.7883 163.921C47.2921 182.358 68.8816 191.806 96.9569 192H97.0695C122.03 191.827 139.624 185.292 154.118 170.811C173.081 151.866 172.51 128.119 166.26 113.541C161.776 103.087 153.227 94.5962 141.537 88.9883ZM98.4405 129.507C88.0005 130.095 77.1544 125.409 76.6196 115.372C76.2232 107.93 81.9158 99.626 99.0812 98.6368C101.047 98.5234 102.976 98.468 104.871 98.468C111.106 98.468 116.939 99.0737 122.242 100.233C120.264 124.935 108.662 128.946 98.4405 129.507Z"
                 />
@@ -474,7 +721,13 @@
       </div>
     </div>
 
-    <div id="share-success" class="d-none" style="color: green; margin-top: 10px">✅ הפוסט נשלח בהצלחה!</div>
+    <div
+      id="share-success"
+      class="d-none"
+      style="color: green; margin-top: 10px"
+    >
+      ✅ הפוסט נשלח בהצלחה!
+    </div>
 
     <!-- Draw Canvas Modal -->
     <div class="modal fade" id="drawModal" tabindex="-1" aria-hidden="true">
@@ -482,26 +735,56 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">ציור קנבס</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="סגור"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="סגור"
+            ></button>
           </div>
           <div class="modal-body">
             <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
               <div class="d-flex align-items-center gap-2">
                 <label class="form-label mb-0">צבע:</label>
-                <input type="color" id="brushColor" value="#111111" class="form-control form-control-color" />
+                <input
+                  type="color"
+                  id="brushColor"
+                  value="#111111"
+                  class="form-control form-control-color"
+                />
               </div>
               <div class="d-flex align-items-center gap-2">
                 <label class="form-label mb-0">עובי:</label>
-                <input type="range" id="brushSize" min="1" max="40" value="6" class="form-range" style="width: 160px" />
+                <input
+                  type="range"
+                  id="brushSize"
+                  min="1"
+                  max="40"
+                  value="6"
+                  class="form-range"
+                  style="width: 160px"
+                />
                 <span id="brushSizeVal" class="text-muted small">6px</span>
               </div>
-              <button class="btn btn-outline-secondary" id="eraserBtn" type="button">
+              <button
+                class="btn btn-outline-secondary"
+                id="eraserBtn"
+                type="button"
+              >
                 <i class="bx bx-eraser"></i> מחק
               </button>
-              <button class="btn btn-outline-secondary" id="undoBtn" type="button">
+              <button
+                class="btn btn-outline-secondary"
+                id="undoBtn"
+                type="button"
+              >
                 <i class="bx bx-undo"></i> חזור
               </button>
-              <button class="btn btn-outline-danger" id="clearCanvas" type="button">
+              <button
+                class="btn btn-outline-danger"
+                id="clearCanvas"
+                type="button"
+              >
                 <i class="bx bx-trash"></i> נקה
               </button>
             </div>
@@ -512,8 +795,12 @@
           </div>
 
           <div class="modal-footer">
-            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">ביטול</button>
-            <button class="btn btn-secondary" id="useCanvasForStoryBtn">צרף לסטורי</button>
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              ביטול
+            </button>
+            <button class="btn btn-secondary" id="useCanvasForStoryBtn">
+              צרף לסטורי
+            </button>
             <button class="btn btn-primary" id="useCanvasBtn">צרף לפוסט</button>
           </div>
         </div>
@@ -531,7 +818,15 @@
             <span id="storyUserName"></span>
           </div>
 
+          <div id="storyOptionsBtn" class="story-options-btn" title="אפשרויות" style="display:none;margin-left:8px;">
+            <span style="font-size:22px;line-height:1;color:#fff;">&#8942;</span>
+          </div>
           <button type="button" class="btn-close btn-close-white story-close" id="storyClose" aria-label="Close"></button>
+          <div id="storyOptionsMenu" class="story-options-menu" style="display:none;position:absolute;top:38px;right:54px;min-width:120px;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.13);z-index:1002;padding:6px 0;">
+            <div class="story-options-menu-item" id="storyDeleteBtn" style="padding:8px 16px;cursor:pointer;color:#e74c3c;">Delete Story</div>
+            <div class="story-options-menu-item" id="storyAddBtn" style="padding:8px 16px;cursor:pointer;color:#0095f6;">Create Story</div>
+          </div>
+
         </div>
 
         <div class="story-media">
@@ -550,21 +845,49 @@
         <div class="modal-content bg-white text-dark">
           <div class="modal-header">
             <h5 class="modal-title">Create Story</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="close"
+            ></button>
           </div>
           <div class="modal-body">
-            <input type="file" id="storyMediaInput" accept="image/*,video/*" class="form-control mb-2" />
-            <input type="text" id="storyCaption" class="form-control mb-2" placeholder="Optional caption..." />
+            <input
+              type="file"
+              id="storyMediaInput"
+              accept="image/*,video/*"
+              class="form-control mb-2"
+            />
+            <input
+              type="text"
+              id="storyCaption"
+              class="form-control mb-2"
+              placeholder="Optional caption..."
+            />
 
-            <div class="text-center my-2"><span class="text-muted">או</span></div>
+            <div class="text-center my-2">
+              <span class="text-muted">או</span>
+            </div>
 
-            <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#drawModal">
+            <button
+              class="btn btn-outline-secondary w-100"
+              data-bs-toggle="modal"
+              data-bs-target="#drawModal"
+            >
               🎨 Draw on Canvas
             </button>
 
-            <span id="storyCanvasBadge" class="badge bg-success mt-2 d-none">🖌️ Canvas attached</span>
+            <span id="storyCanvasBadge" class="badge bg-success mt-2 d-none"
+              >🖌️ Canvas attached</span
+            >
 
-            <button class="btn btn-primary w-100 mt-2" onclick="handleStoryUpload()">Share Story</button>
+            <button
+              class="btn btn-primary w-100 mt-2"
+              onclick="handleStoryUpload()"
+            >
+              Share Story
+            </button>
           </div>
         </div>
       </div>
@@ -576,6 +899,48 @@
       integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
       crossorigin="anonymous"
     ></script>
+    <script>
+      // Force location input to always be editable, even if Google sets readonly/disabled
+      setInterval(function() {
+        const locInput = document.getElementById('locationInput');
+        if (locInput) {
+          locInput.removeAttribute('readonly');
+          locInput.removeAttribute('disabled');
+        }
+      }, 500);
+      // Google Places Autocomplete: never overwrite input value, only save place data, always allow typing
+      document.addEventListener('DOMContentLoaded', function() {
+        const locInput = document.getElementById('locationInput');
+        window._lastLocationData = null;
+        if (locInput && window.google && window.google.maps) {
+          const autocomplete = new google.maps.places.Autocomplete(locInput, {
+            types: ['geocode'],
+            fields: ['formatted_address', 'geometry', 'place_id']
+          });
+          autocomplete.addListener('place_changed', function() {
+            const place = autocomplete.getPlace();
+            if (place && place.formatted_address && place.place_id && place.geometry) {
+              window._lastLocationData = {
+                address: place.formatted_address,
+                placeId: place.place_id,
+                source: 'google',
+                geo: {
+                  type: 'Point',
+                  coordinates: [
+                    place.geometry.location.lng(),
+                    place.geometry.location.lat()
+                  ]
+                }
+              };
+            }
+          });
+          // ודא שהשדה תמיד ניתן לעריכה (הסרה יזומה של readonly/disabled)
+          locInput.removeAttribute('readonly');
+          locInput.removeAttribute('disabled');
+        }
+      });
+    </script>
     <script src="../js/Feed.js"></script>
+    <script src="/frontend/js/messagePage.js"></script>
   </body>
 </html>
