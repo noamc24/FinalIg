@@ -10,6 +10,8 @@ const {
   getUserGroups,
   deleteUser,
   getSuggestions,
+  getUserStats,
+ 
 } = require("../controller/userController");
 const upload = require("../config/multer");
 // Suggestions endpoint
@@ -24,6 +26,8 @@ router.get("/is-following", isFollowing);
 router.get("/:username/groups", getUserGroups)
 
 router.put("/update/:username", upload.single("profilePic"), updateUserProfile);
+router.get("/stats", getUserStats);
+router.put("/update/:username", updateUserProfile);
 
 router.delete("/delete/:username", deleteUser);
 

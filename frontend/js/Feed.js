@@ -531,6 +531,109 @@ async function handlePostUpload() {
 }
 window.handlePostUpload = handlePostUpload;
 
+// ====== External Suggestions (via backend -> RandomUser API) ======
+function createSuggestionItem(user) {
+  const wrap = document.createElement("div");
+  wrap.className = "suggestion";
+
+  const img = document.createElement("img");
+  img.className = "suggestion-image";
+  img.src = user.avatar || DEFAULT_PROFILE;
+  img.alt = user.fullName || user.username || "user";
+  img.onerror = () => (img.src = DEFAULT_PROFILE);
+  wrap.appendChild(img);
+
+  const info = document.createElement("div");
+  info.className = "suggestion-info";
+  const name = document.createElement("span");
+  name.className = "suggestion-name";
+  name.textContent = user.username || "user";
+  const sub = document.createElement("span");
+  sub.className = "suggestion-subtext";
+  sub.textContent = user.fullName || user.country || "Suggested user";
+  info.appendChild(name);
+  info.appendChild(sub);
+  wrap.appendChild(info);
+
+  const btn = document.createElement("button");
+  btn.className = "follow-button";
+  btn.textContent = "follow";
+  btn.dataset.username = user.username || "user";
+  btn.addEventListener("click", () => {
+    btn.textContent = btn.textContent.toLowerCase() === "follow" ? "following" : "follow";
+  });
+  wrap.appendChild(btn);
+
+  return wrap;
+}
+
+async function loadExternalSuggestions(count = 5) {
+  const list = document.getElementById("suggestionsDynamicList");
+  if (!list) return;
+  list.innerHTML = '<div class="text-muted" style="font-size:12px;">Loading suggestions…</div>';
+  try {
+    const res = await fetch(`${API_BASE}/api/external/suggestions?count=${encodeURIComponent(count)}`);
+    if (!res.ok) throw new Error("bad status " + res.status);
+    const data = await res.json();
+    list.innerHTML = "";
+    (Array.isArray(data) ? data : []).forEach((u) => {
+      list.appendChild(createSuggestionItem(u));
+    });
+  } catch (err) {
+    console.warn("Suggestions load error", err);
+    list.innerHTML = '<div class="text-muted" style="font-size:12px;">Unable to load suggestions</div>';
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadExternalSuggestions(5).catch(() => {});
+  loadLatestNews().catch(() => {});
+});
+
+// ====== Latest News (via backend -> HN Algolia API) ======
+function createNewsItem(item) {
+  const wrap = document.createElement("div");
+  wrap.className = "suggestion"; // reuse compact horizontal layout
+
+  const info = document.createElement("div");
+  info.className = "suggestion-info";
+
+  const title = document.createElement("a");
+  title.href = item.url || "#";
+  title.target = "_blank";
+  title.rel = "noopener noreferrer";
+  title.className = "suggestion-name";
+  title.textContent = item.title || "Untitled";
+
+  const meta = document.createElement("span");
+  meta.className = "suggestion-subtext";
+  const time = item.createdAt ? formatTimeAgo(item.createdAt) : "";
+  meta.textContent = `${item.author ? item.author : ""}${item.author && time ? " • " : ""}${time}`;
+
+  info.appendChild(title);
+  info.appendChild(meta);
+  wrap.appendChild(info);
+  return wrap;
+}
+
+async function loadLatestNews() {
+  const list = document.getElementById("newsDynamicList");
+  if (!list) return;
+  list.innerHTML = '<div class="text-muted" style="font-size:12px;">Loading news…</div>';
+  try {
+    const res = await fetch(`${API_BASE}/api/external/news`);
+    if (!res.ok) throw new Error("bad status " + res.status);
+    const data = await res.json();
+    list.innerHTML = "";
+    (Array.isArray(data) ? data : []).slice(0, 6).forEach((n) => {
+      list.appendChild(createNewsItem(n));
+    });
+  } catch (err) {
+    console.warn("News load error", err);
+    list.innerHTML = '<div class="text-muted" style="font-size:12px;">Unable to load news</div>';
+  }
+}
+
 function addPostToFeed(postHTML) {
   const feed = document.getElementById("feedContainer");
   const alertBox = document.getElementById("newPostAlert");
