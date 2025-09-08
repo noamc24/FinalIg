@@ -185,10 +185,10 @@
             <p class="ms-3 fs-5 mb-0 fw-bold">Reels</p>
           </div>
           <div class="d-flex align-items-center">
-            <a href="#" id="messagesLink" class="text-dark ms-1">
+            <a href="#" id="messagesLink" class="text-dark ms-1 d-flex align-items-center" style="text-decoration: none;">
               <i class="bx bx-message-rounded fs-2"></i>
+              <span class="ms-3 fs-5 mb-0 fw-bold">Messages</span>
             </a>
-            <p class="ms-3 fs-5 mb-0 fw-bold">Messages</p>
           </div>
 
           <div class="d-flex">
@@ -207,6 +207,14 @@
             >
               <i class="bx bx-plus-circle fs-2"></i>
               <span class="ms-3 fs-5 mb-0 fw-bold">Create</span>
+            </a>
+          </div>
+
+          <!-- Stats link (large sidebar) -->
+          <div class="d-flex">
+            <a href="stats.html" class="text-dark ms-1 d-flex align-items-center" style="text-decoration: none;">
+              <i class="bx bx-bar-chart-alt-2 fs-2"></i>
+              <span class="ms-3 fs-5 mb-0 fw-bold">Stats</span>
             </a>
           </div>
 
@@ -454,7 +462,10 @@
           <div
             class="comments-header d-flex justify-content-between align-items-center"
           >
-            <h5 class="m-0">comments</h5>
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-outline-secondary btn-sm" onclick="closeCommentsSidebar()">&larr; Back</button>
+              <h5 class="m-0">comments</h5>
+            </div>
             <button class="btn-close" onclick="closeCommentsSidebar()"></button>
           </div>
           <div class="comments-body">
@@ -681,6 +692,81 @@
         }
       });
     </script>
+        <div class="suggestions-header">Suggested for you</div>
+        <!-- Dynamic suggestions populated from backend external API -->
+        <div id="suggestionsDynamicList"></div>
+
+        <div class="suggestion">
+          <img
+            src="../assets/Photos/EpicGames Logo.png"
+            class="suggestion-image"
+          />
+          <div class="suggestion-info">
+            <span class="suggestion-name">Epic Games</span>
+            <span class="suggestion-subtext">Follows you</span>
+          </div>
+          <button class="follow-button" data-username="Epic Games">
+            follow
+          </button>
+        </div>
+
+        <div class="suggestion">
+          <img
+            src="../assets/Photos/EA Sports Logo.png"
+            class="suggestion-image"
+          />
+          <div class="suggestion-info">
+            <span class="suggestion-name">EA Games</span>
+            <span class="suggestion-subtext">Follows you</span>
+          </div>
+          <button class="follow-button" data-username="EA Games">follow</button>
+        </div>
+
+        <div class="suggestion">
+          <img
+            src="../assets/Photos/PlayStation Logo.png"
+            class="suggestion-image"
+          />
+          <div class="suggestion-info">
+            <span class="suggestion-name">PlayStation</span>
+            <span class="suggestion-subtext"
+              >you both follow: MosheParelshtain99</span
+            >
+          </div>
+          <button class="follow-button" data-username="PlayStation">
+            follow
+          </button>
+        </div>
+
+        <div class="suggestion">
+          <img
+            src="../assets/Photos/ChatGPT Image prfl7.png"
+            class="suggestion-image"
+          />
+          <div class="suggestion-info">
+            <span class="suggestion-name">Haim Shafir</span>
+            <span class="suggestion-subtext"
+              >you both follow: Dr.KingPaul1010</span
+            >
+          </div>
+          <button class="follow-button" data-username="Haim Shafir">
+            follow
+          </button>
+        </div>
+
+        <div class="suggestion">
+          <img
+            src="../assets/Photos/GitHub Logo.png"
+            class="suggestion-image"
+          />
+          <div class="suggestion-info">
+            <span class="suggestion-name">GitHub</span>
+            <span class="suggestion-subtext">New to Instagram</span>
+          </div>
+          <button class="follow-button" data-username="GitHub">follow</button>
+        </div>
+        <div class="suggestions-header">Latest News</div>
+        <div id="newsDynamicList"></div>
 
         <div class="Help-Links">
           <p>
