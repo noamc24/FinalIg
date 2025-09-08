@@ -227,12 +227,14 @@ window.openStoryFromBar = openStoryFromBar;
 document.addEventListener("DOMContentLoaded", () => {
   const suggestionImage = document.getElementById("suggestionImage");
   const profilePicSideBar = document.getElementById("profilePicSideBar");
+  const profilePicMedium = document.getElementById("profilePicMedium");
+  const profilePicSmall = document.getElementById("profilePicSmall");
 
   const stored = localStorage.getItem("profilePic");
   const validStored = stored && stored.trim() && stored !== "null" && stored !== "undefined";
   const finalSrc = validStored ? resolveProfilePic(stored) : DEFAULT_PROFILE;
 
-  [suggestionImage, profilePicSideBar].forEach((img) => {
+  [suggestionImage, profilePicSideBar, profilePicMedium, profilePicSmall].forEach((img) => {
     if (!img) return;
     img.src = finalSrc;
     img.onerror = () => { img.src = DEFAULT_PROFILE; };
