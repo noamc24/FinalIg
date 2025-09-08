@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Messages</title>
+    <link rel="stylesheet" href="/frontend/css/messagePage.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Header כמו באינסטגרם -->
+    <header class="dm-header">
+      <h2>Messages</h2>
+      <i class="bx bx-edit-alt"></i>
+    </header>
+
+    <div class="dm-container">
+      <!-- Sidebar – רשימת החברים -->
+      <aside class="dm-sidebar">
+        <h3>Friends</h3>
+        <div class="friend" data-name="Dr.KingPaul1010">
+          <img
+            src="../assets/Photos/ChatGPT Image prfl5.png"
+            alt="Dr.KingPaul1010"
+          />
+          <p>Dr.KingPaul1010</p>
+        </div>
+        <div class="friend" data-name="Ron.Drin7">
+          <img src="../assets/Photos/ChatGPT Image prfl6.png" alt="Ron.Drin7" />
+          <p>Ron.Drin7</p>
+        </div>
+        <div class="friend" data-name="unrealNews">
+          <img
+            src="../assets/Photos/ChatGPT Image prfl3.png"
+            alt="unrealNews"
+          />
+          <p>unrealNews</p>
+        </div>
+        <div class="friend" data-name="Sultan29">
+          <img src="../assets/Photos/ChatGPT Image prfl2.png" alt="Sultan29" />
+          <p>Sultan29</p>
+        </div>
+        <div class="friend" data-name="noam11010">
+          <img src="../assets/Photos/ChatGPT Image prfl1.png" alt="noam11010" />
+          <p>noam11010</p>
+        </div>
+        <div class="friend" data-name="I.D.F">
+          <img src="../assets/Photos/IDF Logo.png" alt="I.D.F" />
+          <p>I.D.F</p>
+        </div>
+        <div class="friend" data-name="itzik123213">
+          <img
+            src="../assets/Photos/ChatGPT Image prfl7.png"
+            alt="itzik123213"
+          />
+          <p>itzik123213</p>
+        </div>
+        <div class="friend" data-name="AlexM">
+          <img src="../assets/Photos/ChatGPT Image post3.png" alt="AlexM" />
+          <p>AlexM</p>
+        </div>
+        <div class="friend" data-name="MayaK">
+          <img src="../assets/Photos/defaultPrfl.png" alt="MayaK" />
+          <p>MayaK</p>
+        </div>
+        <div class="friend" data-name="SamL">
+          <img src="../assets/Photos/ChatGPT Image post4.png" alt="SamL" />
+          <p>SamL</p>
+        </div>
+        <div class="friend" data-name="LilyR">
+          <img src="../assets/Photos/ChatGPT Image post1.png" alt="LilyR" />
+          <p>LilyR</p>
+        </div>
+        <div class="friend" data-name="NoamB">
+          <img src="../assets/Photos/ChatGPT Image post5.png" alt="NoamB" />
+          <p>NoamB</p>
+        </div>
+
+        <div class="group-option" id="groupChat">
+          <p>Groups Chat</p>
+        </div>
+      </aside>
+
+      <!-- Main chat window -->
+      <main class="dm-chat">
+        <div class="chat-header" id="chatHeader">
+          <h3>Select a friend or group</h3>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+          <input type="text" id="chatInput" placeholder="Message..." />
+          <button id="sendBtn">Send</button>
+        </div>
+      </main>
+    </div>
+
+    <!-- Container עיקרי -->
+    <div class="dm-container">
+      <!-- Sidebar – רשימת שיחות -->
+      <aside class="dm-sidebar">
+        <!-- כאן יופיעו שיחות עם שמות/תמונה -->
+      </aside>
+
+      <!-- Main – חלון השיחה -->
+      <main class="dm-chat">
+        <div class="chat-messages" id="chatMessages">
+          <!-- הודעות יופיעו כאן -->
+        </div>
+        <div class="chat-input">
+          <input type="text" id="chatInput" placeholder="Message..." />
+          <button id="sendBtn">Send</button>
+        </div>
+      </main>
+    </div>
+
+    <!-- ===== Popup ליצירת קבוצה חדשה ===== -->
+    <div id="groupPopup">
+      <div id="groupPopupContent">
+        <input
+          type="text"
+          id="newGroupName"
+          placeholder="Enter group name..."
+        />
+        <button class="createBtn">Create</button>
+        <button class="cancelBtn">Cancel</button>
+      </div>
+    </div>
+
+    <script src="/frontend/js/messagePage.js"></script>
+  </body>
+</html>
