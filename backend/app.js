@@ -8,9 +8,6 @@ const postsRouter = require("./routes/postsRoute");
 const groupsRouter = require("./routes/groupRoute");
 const postsExtrasRouter = require("./routes/postsExtrasRoute");
 const storiesRouter = require("./routes/storiesRoute");
-
-const externalRouter = require("./routes/externalRoute");
-
 const statsRouter = require("./routes/statsRoute");
 
 
@@ -41,9 +38,6 @@ app.use("/api/posts", postsRouter);
 app.use("/api/groups", groupsRouter);
 app.use("/api/post-extras", postsExtrasRouter);
 app.use("/api/stories", storiesRouter);
-
-app.use("/api/external", externalRouter);
-
 app.use("/api/stats", statsRouter);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
