@@ -8,6 +8,7 @@ router.get("/:group", groupController.getGroup);
 router.post("/join", groupController.joinGroup);
 
 router.post("/create", groupController.createGroup);
+router.post("/create-from-following", groupController.createGroupFromFollowing);
 
 router.post("/add-member", groupController.addMember);
 

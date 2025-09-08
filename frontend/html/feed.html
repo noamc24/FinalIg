@@ -159,7 +159,7 @@
             class="my-3"
           />
           <div class="d-flex">
-            <a href="#" class="text-dark ms-1"
+            <a href="#" id="navHomeLink" class="text-dark ms-1"
               ><i class="bx bx-home-alt fs-2"></i
             ></a>
             <p class="ms-3 fs-5 mb-0 fw-bold">Home</p>
@@ -173,7 +173,7 @@
             </p>
           </div>
           <div class="d-flex">
-            <a href="#" class="text-dark ms-1"
+            <a href="#" id="navExploreLink" class="text-dark ms-1"
               ><i class="bx bx-compass fs-2"></i
             ></a>
             <p class="ms-3 fs-5 mb-0 fw-bold">Explore</p>
@@ -266,13 +266,13 @@
             style="max-width: 37px"
             class="my-3"
           />
-          <a href="#" class="text-dark ms-1"
+          <a href="#" id="navHomeLinkMd" class="text-dark ms-1"
             ><i class="bx bx-home-alt fs-2"></i
           ></a>
           <a href="#" class="text-dark ms-1" id="medium-search"
             ><i class="bx bx-search fs-2"></i
           ></a>
-          <a href="#" class="text-dark ms-1"
+          <a href="#" id="navExploreLinkMd" class="text-dark ms-1"
             ><i class="bx bx-compass fs-2"></i>
           </a>
           <a href="#" class="text-dark ms-1"
@@ -333,10 +333,10 @@
     <div class="d-flex">
       <nav class="d-block d-lg-none bg-white border-top p-2 fixed-bottom py-2">
         <div class="d-flex flex-row gap-3 justify-content-around flex-wrap">
-          <a href="#" class="text-dark ms-1"
+          <a href="#" id="navHomeLinkSm" class="text-dark ms-1"
             ><i class="bx bx-home-alt fs-2"></i
           ></a>
-          <a href="#" class="text-dark ms-1"
+          <a href="#" id="navExploreLinkSm" class="text-dark ms-1"
             ><i class="bx bx-compass fs-2"></i>
           </a>
           <a href="#" class="text-dark ms-1"
@@ -1134,6 +1134,45 @@
           locInput.removeAttribute('disabled');
         }
       });
+    </script>
+    <script>
+      // Navigation controls: load Following under Home, Explore under Explore
+      (function () {
+        const API_BASE = 'http://localhost:3000';
+
+        async function loadFollowing() {
+          try {
+            const username = localStorage.getItem('loggedInUser');
+            if (!username) return;
+            const res = await fetch(`${API_BASE}/api/posts/feed/${username}`);
+            const posts = await res.json();
+            if (window.renderFeed) window.renderFeed(posts);
+          } catch (_) {}
+        }
+
+        async function loadExplore() {
+          try {
+            const res = await fetch(`${API_BASE}/api/posts/explore`);
+            const posts = await res.json();
+            if (window.renderFeed) window.renderFeed(posts);
+          } catch (_) {}
+        }
+
+        function bind(id, handler) {
+          const el = document.getElementById(id);
+          if (el) el.addEventListener('click', (e) => { e.preventDefault(); handler(); });
+        }
+
+        // Large sidebar
+        bind('navHomeLink', loadFollowing);
+        bind('navExploreLink', loadExplore);
+        // Medium sidebar
+        bind('navHomeLinkMd', loadFollowing);
+        bind('navExploreLinkMd', loadExplore);
+        // Bottom nav (sm)
+        bind('navHomeLinkSm', loadFollowing);
+        bind('navExploreLinkSm', loadExplore);
+      })();
     </script>
     <script src="../js/Feed.js"></script>
     <script src="/frontend/js/messagePage.js"></script>

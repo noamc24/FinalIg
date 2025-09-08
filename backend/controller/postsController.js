@@ -13,6 +13,16 @@ async function getPostsByUser(req, res) {
 }
 
 const postsController = {
+  // Explore feed: all posts (optionally limited)
+  getExplore: async (req, res) => {
+    try {
+      const limit = Math.min(Math.max(parseInt(req.query.limit || '100', 10) || 100, 1), 500);
+      const posts = await Post.find({}).sort({ createdAt: -1 }).limit(limit);
+      res.json(posts);
+    } catch (err) {
+      res.status(500).json({ error: "Server error" });
+    }
+  },
   getFeed: async (req, res) => {
     try {
       const user = await User.findOne({ username: req.params.username });
