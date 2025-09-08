@@ -48,8 +48,9 @@ async function loadPublicProfile() {
       if (data.followers && myUsername) {
         isFollowing = data.followers.includes(myUsername);
       }
-      followBtn.textContent = isFollowing ? 'עוקב' : 'עקוב';
-      followBtn.onclick = () => toggleFollow(data.username, myUsername, followBtn);
+      followBtn.textContent = isFollowing ? 'Following' : 'Follow';
+      followBtn.classList.toggle('following', isFollowing);
+      followBtn.onclick = () => toggleFollowUnified(data.username, myUsername, followBtn);
     }
     // Fetch user posts
   const postsRes = await fetch(`${API_BASE}/api/posts/user/${username}`);
@@ -88,13 +89,15 @@ function renderGallery(posts) {
 }
 
 
-async function toggleFollow(followeeUsername, followerUsername, button) {
+
+// Unified follow button logic (same as feed)
+async function toggleFollowUnified(followeeUsername, followerUsername, button) {
   if (!followerUsername) {
     alert('עליך להתחבר כדי לעקוב');
     return;
   }
-  const isCurrentlyFollowing = button.textContent.trim() === 'עוקב';
-  const action = isCurrentlyFollowing ? 'unfollow' : 'follow';
+  const isFollowing = button.classList.contains('following');
+  const action = isFollowing ? 'unfollow' : 'follow';
   try {
     const res = await fetch(`${API_BASE}/api/users/${action}`, {
       method: 'POST',
@@ -103,6 +106,13 @@ async function toggleFollow(followeeUsername, followerUsername, button) {
     });
     const result = await res.json();
     if (res.ok) {
+      if (action === 'follow') {
+        button.textContent = 'Following';
+        button.classList.add('following');
+      } else {
+        button.textContent = 'Follow';
+        button.classList.remove('following');
+      }
       // Refresh profile and stats after follow/unfollow
       await loadPublicProfile();
     } else {
@@ -110,7 +120,7 @@ async function toggleFollow(followeeUsername, followerUsername, button) {
     }
   } catch (err) {
     console.error('שגיאה בבקשת follow/unfollow:', err);
-    alert('שגיאה בשרת');
+    // alert('שגיאה בשרת');
   }
 }
 

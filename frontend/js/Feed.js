@@ -780,12 +780,16 @@ function activateFollowButtons() {
         const result = await res.json();
         if (res.ok) {
           button.textContent = action === "follow" ? "Following" : "Follow";
+          // Refresh the feed after follow/unfollow
+          const feedRes = await fetch(`${API_BASE}/api/posts/feed/${currentUser}`);
+          const posts = await feedRes.json();
+          await renderFeed(posts);
         } else {
           alert(result.error || "שגיאה בבקשת מעקב");
         }
       } catch (err) {
         console.error("שגיאה בבקשת Follow/Unfollow:", err);
-        alert("שגיאה בשרת");
+        // alert("שגיאה בשרת");
       }
     });
   });
