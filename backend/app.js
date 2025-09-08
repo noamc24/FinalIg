@@ -9,6 +9,7 @@ const groupsRouter = require("./routes/groupRoute");
 const postsExtrasRouter = require("./routes/postsExtrasRoute");
 const storiesRouter = require("./routes/storiesRoute");
 const statsRouter = require("./routes/statsRoute");
+const externalRouter = require("./routes/externalRoute");
 
 
 const app = express();
@@ -39,6 +40,7 @@ app.use("/api/groups", groupsRouter);
 app.use("/api/post-extras", postsExtrasRouter);
 app.use("/api/stories", storiesRouter);
 app.use("/api/stats", statsRouter);
+app.use("/api/external", externalRouter);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
