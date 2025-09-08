@@ -1,3 +1,13 @@
+// Switch user button logic (above suggestions)
+document.addEventListener('DOMContentLoaded', function() {
+  const switchBtn = document.getElementById('switchButton');
+  if (switchBtn) {
+    switchBtn.addEventListener('click', function() {
+      localStorage.clear();
+      window.location.assign('login.html');
+    });
+  }
+});
 /* ===========================
    Feed.js — fixed & polished
 =========================== */

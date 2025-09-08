@@ -1,0 +1,68 @@
+/* Public Profile Page Styles */
+.profile-public-container {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 32px 28px 24px 28px;
+}
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 18px;
+}
+.profile-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e0e0e0;
+  background: #f0f0f0;
+}
+.profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.profile-info h2 {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 700;
+}
+.profile-fullname {
+  font-size: 1.1rem;
+  color: #888;
+  margin-bottom: 8px;
+}
+#followBtn {
+  width: 120px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 1rem;
+}
+.profile-stats {
+  display: flex;
+  gap: 24px;
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+  color: #222;
+}
+.profile-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+}
+.profile-gallery img, .profile-gallery video {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f7f7f7;
+}
+@media (max-width: 700px) {
+  .profile-public-container { padding: 10px 2vw; }
+  .profile-header { flex-direction: column; gap: 16px; align-items: flex-start; }
+  .profile-avatar { width: 80px; height: 80px; }
+}

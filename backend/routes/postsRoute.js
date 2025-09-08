@@ -1,3 +1,4 @@
+// (הוסרה שורה זו - יש למטה ראוט תקני)
 const path = require("path");
 const multer = require("multer");
 const express = require("express");
@@ -16,6 +17,9 @@ const upload = multer({
     fieldSize: 5 * 1024 * 1024
   }
 });
+
+// Get all posts by username
+router.get("/user/:username", postsController.getPostsByUser);
 
 router.put("/:id", postsController.updatePost);
 router.get("/feed/:username", postsController.getFeed);

@@ -38,6 +38,17 @@ app.use("/api/post-extras", postsExtrasRouter);
 app.use("/api/stories", storiesRouter);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Serve frontend HTML files for direct navigation (SPA-like)
+app.get(/^\/frontend\/(.*)\.html$/, (req, res) => {
+  const file = req.params[0] + '.html';
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'html', file));
+});
+
+// Catch-all for 404 (API or static)
+app.use((req, res) => {
+  res.status(404).send('Not found');
+});
+
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`🚀 http://localhost:${PORT}`));
 });
