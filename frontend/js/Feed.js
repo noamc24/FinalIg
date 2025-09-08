@@ -1331,3 +1331,30 @@ function deleteCurrentStory() {
     document.getElementById('storyPrev')?.addEventListener('click', prevStory);
   });
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Google Places Autocomplete for post location
+  const locationInput = document.getElementById("locationInput");
+  if (locationInput && window.google && window.google.maps) {
+    const autocomplete = new google.maps.places.Autocomplete(locationInput, { types: ["geocode"] });
+    autocomplete.addListener("place_changed", function () {
+      const place = autocomplete.getPlace();
+      if (place && place.geometry && place.geometry.location) {
+        window._lastLocationData = {
+          address: place.formatted_address || locationInput.value,
+          placeId: place.place_id,
+          geo: {
+            type: "Point",
+            coordinates: [
+              place.geometry.location.lng(),
+              place.geometry.location.lat()
+            ]
+          },
+          source: "google"
+        };
+      } else {
+        window._lastLocationData = null;
+      }
+    });
+  }
+});
