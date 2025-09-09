@@ -679,11 +679,17 @@
                     btn.textContent = 'Follow';
                     btn.classList.remove('following');
                   }
+                  // Refresh the feed after follow/unfollow
+                  if (window.renderFeed) {
+                    const feedRes = await fetch('http://localhost:3000/api/posts/feed/' + myUsername);
+                    const posts = await feedRes.json();
+                    await window.renderFeed(posts);
+                  }
                 } else {
                   alert(result.error || 'שגיאה בבקשת מעקב');
                 }
               } catch (err) {
-                alert('שגיאה בשרת');
+                // alert('שגיאה בשרת');
               }
             });
           });
