@@ -142,7 +142,7 @@ async function loadStoriesFeed() {
   if (!username) return;
 
   try {
-    const res = await fetch(`${API_BASE}/api/stories/feed/${username}`);
+    const res = await fetch(`${API_BASE}/api/stories?username=${username}`);
     if (!res.ok) throw new Error("No server stories");
     const items = await res.json();
     storiesData = (Array.isArray(items) ? items : []).map(s => ({
